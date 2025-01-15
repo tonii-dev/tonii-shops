@@ -2,11 +2,10 @@ package io.github.toniidev.toniishops;
 
 import io.github.toniidev.toniishops.commands.*;
 import io.github.toniidev.toniishops.factories.InventoryFactory;
-import io.github.toniidev.toniishops.listener.BlockListener;
-import io.github.toniidev.toniishops.listener.PlayerListener;
+import io.github.toniidev.toniishops.listeners.BlockListener;
+import io.github.toniidev.toniishops.listeners.PlayerListener;
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class ToniiShops extends JavaPlugin {

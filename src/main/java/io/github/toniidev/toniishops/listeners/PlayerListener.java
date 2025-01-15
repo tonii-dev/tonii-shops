@@ -1,4 +1,4 @@
-package io.github.toniidev.toniishops.listener;
+package io.github.toniidev.toniishops.listeners;
 
 import io.github.toniidev.toniishops.classes.ServerPlayer;
 import org.bukkit.event.EventHandler;
