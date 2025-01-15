@@ -1,0 +1,27 @@
+name: tonii-shops
+version: '1.0-SNAPSHOT'
+main: io.github.toniidev.toniishops.ToniiShops
+api-version: '1.21'
+permissions:
+  shop-creation:
+    description: Allows the player to create a shop
+  shop-management:
+    description: Allows the player to manage his shops
+  shop-browsing:
+    description: Allows the player to browse other players' shops
+commands:
+  give-permission:
+    usage: /give-permission <user> <permission>
+    description: Gives a permission to a player
+  remove-permission:
+    usage: /remove-permission <user> <permission>
+    description: Removes a permission from a player
+  create-shop:
+    usage: /<command>
+    description: Gives the player a chest items in which will be sold at a fixed price that he can choose
+  manage-shops:
+    usage: /<command>
+    description: Shows a GUI that allows the player to manage the shops that he owns
+  browse-shops:
+    usage: /<command>
+    description: Shows a GUI that allows the player to browse all the other shops

@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="tonii-shops:jar">
+    <output-path>$USER_HOME$/Downloads/server/plugins</output-path>
+    <root id="archive" name="tonii-shops.jar">
+      <element id="module-output" name="tonii-shops" />
+    </root>
+  </artifact>
+</component>
