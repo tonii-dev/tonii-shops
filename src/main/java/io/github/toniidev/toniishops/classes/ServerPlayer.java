@@ -1,6 +1,7 @@
 package io.github.toniidev.toniishops.classes;
 
 import io.github.toniidev.toniishops.factories.ScoreboardFactory;
+import io.github.toniidev.toniishops.strings.ShopError;
 import io.github.toniidev.toniishops.utils.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -89,6 +90,22 @@ public class ServerPlayer {
      */
     public void removeMoney(double value) {
         this.setMoney(this.getMoney() - value);
+    }
+
+    /**
+     * A secure way to remove money from someone's balance. It notifies the Player if he doesn't have enough money
+     *
+     * @param value The amount of money to remove from Player balance
+     * @return true if the operation is successful, false if it's not
+     */
+    public boolean secureRemoveMoney(double value) {
+        if (this.getMoney() < value) {
+            this.getPlayer().sendMessage(ShopError.NOT_ENOUGH_MONEY.getMessage());
+            return false;
+        }
+
+        this.removeMoney(value);
+        return true;
     }
 
     /**

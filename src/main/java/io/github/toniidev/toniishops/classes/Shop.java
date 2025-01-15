@@ -175,10 +175,13 @@ public class Shop {
 
                 if (clicked.getType().equals(Material.WHITE_STAINED_GLASS_PANE)) return;
 
-                if (player.getMoney() < shop.getFixedPrice()) {
+                /*if (player.getMoney() < shop.getFixedPrice()) {
                     e.getWhoClicked().sendMessage(ShopError.NOT_ENOUGH_MONEY.getMessage());
                     return;
-                }
+                }*/
+
+                // TODO: Test if this works
+                if(!player.secureRemoveMoney(shop.getFixedPrice())) return;
 
                 int newAmount = clicked.getAmount() - 1;
 

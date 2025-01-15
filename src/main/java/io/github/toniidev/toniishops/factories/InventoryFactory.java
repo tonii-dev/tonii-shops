@@ -27,7 +27,7 @@ public class InventoryFactory implements Listener {
 
     /**
      * This list is temporary, it means that it will be reset when the plugin enables or
-     * disables. But that's ok, because we don't need its item to be always available: any
+     * disables. But that's ok, because we don't need its items to be always available: any
      * time we show a Player this Inventory, it is created again.
      */
     private final static List<InventoryFactory> factories = new ArrayList<>();
