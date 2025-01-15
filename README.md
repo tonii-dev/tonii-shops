@@ -1,0 +1,4 @@
+# What's the scope of this Plugin?
+This plugin provides an easy and fast-to-install way to implement shops to any Minecraft server! Please note that this is created strictly according to my goals, so this plugin may contain some useless features for your server or some features that don't fit your server properly. For this reason, I decided not to post releases for this plugin: you can always see the Plugin development process and copy or edit any feature that you like. If you decided to use my plugin on your server, I would appreciate if you gave me some credits to support my work and to make me proud of my work.
+# Installation
+To install this plugin into your server (not recommended because it's created for my own server, so maybe you need to edit some names first, at least) you need a Compiler. I would recommend to use Intellij IDEA Community Edition, that is free and easy-to-use, if you don't already have one installed.
