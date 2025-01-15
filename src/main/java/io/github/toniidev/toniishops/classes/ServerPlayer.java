@@ -3,9 +3,7 @@ package io.github.toniidev.toniishops.classes;
 import io.github.toniidev.toniishops.factories.ScoreboardFactory;
 import io.github.toniidev.toniishops.utils.StringUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.Server;
 import org.bukkit.entity.Player;
-import org.bukkit.scoreboard.*;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -106,11 +104,16 @@ public class ServerPlayer {
                 .findFirst().orElse(null);
     }
 
-    public ScoreboardFactory getScoreboardFactory(){
+    /**
+     * Default getter for this class.
+     *
+     * @return The scoreboard factory of the Player linked to this ServerPlayer instance
+     */
+    public ScoreboardFactory getScoreboardFactory() {
         List<Shop> shops = Shop.getPlayerShops(this.getPlayer());
 
         String shopLine;
-        if(shops == null) shopLine = StringUtils.formatColorCodes('&', "&fActive shops: &b0");
+        if (shops == null) shopLine = StringUtils.formatColorCodes('&', "&fActive shops: &b0");
         else shopLine = StringUtils.formatColorCodes('&', "&fActive shops: &b" + shops.size());
 
         return new ScoreboardFactory(this.getPlayer(), StringUtils.formatColorCodes('&', "&b&lWorld&f&lWide"))
@@ -130,9 +133,10 @@ public class ServerPlayer {
 
     /**
      * Static method that refreshes the scoreboard of a Player
+     *
      * @param player The Player of which we must refresh the scoreboard
      */
-    public static void refreshScoreboard(Player player){
+    public static void refreshScoreboard(Player player) {
         ServerPlayer serverPlayer = ServerPlayer.getPlayer(player);
         assert serverPlayer != null;
 

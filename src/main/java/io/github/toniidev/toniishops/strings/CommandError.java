@@ -43,11 +43,11 @@ public enum CommandError {
 
     private final String message;
 
-    CommandError(String string){
+    CommandError(String string) {
         message = string;
     }
 
-    public String getMessage(){
+    public String getMessage() {
         return message;
     }
 }

@@ -10,14 +10,16 @@ public class StringFactory {
     /**
      * Creates a blank StringFactory instance
      */
-    public StringFactory(){}
+    public StringFactory() {
+    }
 
     /**
      * Creates a StringFactory instance starting from a String.
      * The text coming from this StringFactory instance will be added to the initialString one
+     *
      * @param initialString The String that this StringFactory will add the text to
      */
-    public StringFactory(String initialString){
+    public StringFactory(String initialString) {
         result = initialString;
     }
 
@@ -25,10 +27,11 @@ public class StringFactory {
      * Adds some text to the string that will be got with this#get().
      * It can be used along with this#setColor() to set a custom color code,
      * else it will be written in white
+     *
      * @param string The text that has to be added to the string
      * @return This StringFactory instance
      */
-    public StringFactory append(String string){
+    public StringFactory append(String string) {
         /*
           The "last" string is added to the String that is being built only
           when this#setColor() is called. If it doesn't get called, as written in the comment,
@@ -37,7 +40,7 @@ public class StringFactory {
           start with "§" it means that this#setColor() has never being called on this string,
           so it hasn't been added.
          */
-        if(this.last != null && !this.last.startsWith("§")){
+        if (this.last != null && !this.last.startsWith("§")) {
             last = "§r§f" + last;
             addLast();
         }
@@ -49,6 +52,7 @@ public class StringFactory {
     /**
      * Sets the color of the "last" string. The "last" string is the last string that
      * has been appended to this factory.
+     *
      * @param colorCode The code of the color that the last string that has been appended has to have.
      *                  Color codes:
      *                  0 black, 1 dark blue, 2 dark green,
@@ -60,7 +64,7 @@ public class StringFactory {
      *                  m strikethrough, n underline, o italic
      * @return This StringFactory instance
      */
-    public StringFactory setColor(char colorCode){
+    public StringFactory setColor(char colorCode) {
         last = "§" + colorCode + last;
         addLast();
         return this;
@@ -70,16 +74,17 @@ public class StringFactory {
      * Adds the String that is being now being built to the String that will be given
      * at the end of the process with this#get()
      */
-    private void addLast(){
-        if(this.result == null) result = last;
+    private void addLast() {
+        if (this.result == null) result = last;
         else result += " " + last;
     }
 
     /**
      * Finally, gets the created string
+     *
      * @return The String that this StringFactory instance has created
      */
-    public String get(){
+    public String get() {
         return result;
     }
 }

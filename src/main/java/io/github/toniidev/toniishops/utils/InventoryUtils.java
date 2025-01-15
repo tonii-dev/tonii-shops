@@ -2,7 +2,6 @@ package io.github.toniidev.toniishops.utils;
 
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
 
 public class InventoryUtils {
     /**

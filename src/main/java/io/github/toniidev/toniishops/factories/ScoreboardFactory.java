@@ -5,9 +5,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.*;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Scoreboard factory. This class will be used to create any custom Scoreboard
@@ -21,10 +19,11 @@ public class ScoreboardFactory {
 
     /**
      * Creates a blank ScoreboardFactory instance.
+     *
      * @param playerToDisplayScoreboardTo Player that has to see the scoreboard that this ScoreboardFactory will create
-     * @param title The title of the scoreboard that this ScoreboardFactory will create
+     * @param title                       The title of the scoreboard that this ScoreboardFactory will create
      */
-    public ScoreboardFactory(Player playerToDisplayScoreboardTo, String title){
+    public ScoreboardFactory(Player playerToDisplayScoreboardTo, String title) {
         this.player = playerToDisplayScoreboardTo;
 
         assert Bukkit.getScoreboardManager() != null;
@@ -36,33 +35,36 @@ public class ScoreboardFactory {
 
     /**
      * Adds a line to the Scoreboard that this ScoreboardFactory instance is creating
+     *
      * @param line The line to add to the Scoreboard
      * @return This ScoreboardFactory instance
      */
-    public ScoreboardFactory addLine(String line){
+    public ScoreboardFactory addLine(String line) {
         this.lines.add(line);
         return this;
     }
 
     /**
      * Adds a blank line to the Scoreboard that this ScoreboardFactory instance is creating
+     *
      * @return This ScoreboardFactory instance
      */
-    public ScoreboardFactory addBlankLine(){
+    public ScoreboardFactory addBlankLine() {
         return this.addLine(" ");
     }
 
     /**
      * Gets the Scoreboard that this ScoreboardFactory has created. This should only be used when the creation
      * progress came to an end
+     *
      * @return This ScoreboardFactory instance
      */
-    public Scoreboard getScoreboard(){
+    public Scoreboard getScoreboard() {
         for (String line : scoreboard.getEntries()) {
             scoreboard.resetScores(line);
         }
 
-        for(int i = this.lines.size() - 1; i >= 0; i--){
+        for (int i = this.lines.size() - 1; i >= 0; i--) {
             objective.getScore(this.lines.get(this.lines.size() - i - 1)).setScore(i);
         }
 
@@ -72,7 +74,7 @@ public class ScoreboardFactory {
     /**
      * Displays this scoreboard to the Player linked to it
      */
-    public void display(){
+    public void display() {
         this.player.setScoreboard(getScoreboard());
     }
 }

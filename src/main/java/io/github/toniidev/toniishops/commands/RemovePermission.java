@@ -19,21 +19,22 @@ public class RemovePermission implements CommandExecutor {
 
     /**
      * The RemovePermission command logic.
+     *
      * @param plugin The main plugin instance.
      */
-    public RemovePermission(Plugin plugin){
+    public RemovePermission(Plugin plugin) {
         this.main = plugin;
     }
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] args) {
-        if(!commandSender.isOp()){
+        if (!commandSender.isOp()) {
             commandSender.sendMessage(CommandError.COMMAND_NEEDS_OP.getMessage());
 
             return true;
         }
 
-        if(args.length < 2 || args[0] == null || args[1] == null){
+        if (args.length < 2 || args[0] == null || args[1] == null) {
             commandSender.sendMessage(new StringFactory(CommandError.INVALID_COMMAND_USAGE.getMessage())
                     .append(command.getUsage()).setColor('f')
                     .get());
@@ -43,7 +44,7 @@ public class RemovePermission implements CommandExecutor {
 
         Player player = Bukkit.getPlayer(args[0]);
 
-        if(player == null){
+        if (player == null) {
             commandSender.sendMessage(new StringFactory()
                     .append("[tonii-shops]").setColor('a')
                     .append("Command:").setColor('e')
@@ -55,7 +56,7 @@ public class RemovePermission implements CommandExecutor {
             return true;
         }
 
-        if(Bukkit.getPluginManager().getPermission(args[1]) == null){
+        if (Bukkit.getPluginManager().getPermission(args[1]) == null) {
             commandSender.sendMessage(new StringFactory()
                     .append("[tonii-shops]").setColor('a')
                     .append("Command:").setColor('e')
@@ -67,7 +68,7 @@ public class RemovePermission implements CommandExecutor {
             return true;
         }
 
-        if(!player.hasPermission(args[1])){
+        if (!player.hasPermission(args[1])) {
             commandSender.sendMessage(CommandError.PLAYER_DOES_NOT_HAVE_PERMISSION.getMessage());
 
             return true;
@@ -82,11 +83,12 @@ public class RemovePermission implements CommandExecutor {
      * Removes a permission from a Player. Before using this class, I always make sure
      * that player != null, a permission named %permissionName% exists, and player has
      * that permission.
-     * @param player The player that has the permission that we want to remove
+     *
+     * @param player         The player that has the permission that we want to remove
      * @param permissionName The name of the permission that we want to remove
-     * @param plugin The main plugin instance
+     * @param plugin         The main plugin instance
      */
-    public static void removePermission(Player player, String permissionName, Plugin plugin){
+    public static void removePermission(Player player, String permissionName, Plugin plugin) {
         PermissionAttachment attachment = player.addAttachment(plugin);
         attachment.setPermission(permissionName, false);
     }

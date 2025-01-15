@@ -2,9 +2,7 @@ package io.github.toniidev.toniishops.classes;
 
 import io.github.toniidev.toniishops.factories.InventoryFactory;
 import io.github.toniidev.toniishops.factories.ItemStackFactory;
-import io.github.toniidev.toniishops.interfaces.InventoryInterface;
 import io.github.toniidev.toniishops.strings.ShopError;
-import io.github.toniidev.toniishops.utils.InventoryUtils;
 import io.github.toniidev.toniishops.utils.ItemUtils;
 import io.github.toniidev.toniishops.utils.StringUtils;
 import org.bukkit.Bukkit;
@@ -12,7 +10,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Chest;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
@@ -137,18 +134,30 @@ public class Shop {
 
     /**
      * Gets the Inventory of the chest linked to this Shop instance
+     *
      * @return The instance of the Inventory that is linked to the chest that is located in %this%.location
      */
-    public Inventory getShopInventory(){
+    public Inventory getShopInventory() {
         Chest chest = (Chest) this.location.getBlock().getState();
         return chest.getBlockInventory();
     }
 
-    public Inventory getShopCustomInventory(Plugin main){
+    /**
+     * Gets the Inventory that has to be shown to anyone that has to buy from this shop.
+     * So, it will be called any time that this shop is going to be interacted by everyone but
+     * the owner of the shop
+     *
+     * @param main The main plugin instance
+     * @return The Inventory that has to be shown to any player that tries to interact with
+     * this Shop but the owner. It is different from %this%#getShopInventory() because it
+     * also has a logic behind it, that has been built with an InventoryFactory. It implements
+     * buy features, and it customizes the Inventory, like adding glass in white spaces.
+     */
+    public Inventory getShopCustomInventory(Plugin main) {
         InventoryFactory factory = new InventoryFactory(this.getShopInventory().getSize() / 9,
                 StringUtils.formatColorCodes('&', "&l" + this.getOwner().getDisplayName() + "&r shop"), main);
 
-        for(int i = 0; i < this.getShopInventory().getSize(); i++){
+        for (int i = 0; i < this.getShopInventory().getSize(); i++) {
             factory.setItem(i, this.getShopInventory().getItem(i));
 
             Shop shop = this;
@@ -164,9 +173,9 @@ public class Shop {
                 assert clicked != null;
                 assert clickedOnRealInventory != null;
 
-                if(clicked.getType().equals(Material.WHITE_STAINED_GLASS_PANE)) return;
+                if (clicked.getType().equals(Material.WHITE_STAINED_GLASS_PANE)) return;
 
-                if(player.getMoney() < shop.getFixedPrice()){
+                if (player.getMoney() < shop.getFixedPrice()) {
                     e.getWhoClicked().sendMessage(ShopError.NOT_ENOUGH_MONEY.getMessage());
                     return;
                 }
@@ -176,11 +185,10 @@ public class Shop {
                 ItemStack bought = clicked.clone();
                 bought.setAmount(1);
 
-                if(newAmount != 0) {
+                if (newAmount != 0) {
                     clicked.setAmount(newAmount);
                     clickedOnRealInventory.setAmount(newAmount);
-                }
-                else {
+                } else {
                     clicked.setType(Material.WHITE_STAINED_GLASS_PANE);
                     ItemUtils.rename(clicked, " ");
                     realShopInventory.setItem(e.getRawSlot(), new ItemStack(Material.AIR));

@@ -52,13 +52,14 @@ public class ItemUtils {
 
     /**
      * Renames an ItemStack
+     *
      * @param itemStack The instance of the ItemStack to rename
-     * @param name The new name to assign to the ItemStack
+     * @param name      The new name to assign to the ItemStack
      */
-    public static void rename(ItemStack itemStack, String name){
+    public static void rename(ItemStack itemStack, String name) {
         ItemMeta meta = itemStack.getItemMeta();
 
-        if(meta == null){
+        if (meta == null) {
             Bukkit.getLogger().warning(ConsoleString.MISSING_ITEM_META.getMessage() + itemStack.getType());
             return;
         }

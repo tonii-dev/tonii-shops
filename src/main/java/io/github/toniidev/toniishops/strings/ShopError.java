@@ -26,11 +26,11 @@ public enum ShopError {
 
     private final String message;
 
-    ShopError(String string){
+    ShopError(String string) {
         message = string;
     }
 
-    public String getMessage(){
+    public String getMessage() {
         return message;
     }
 }

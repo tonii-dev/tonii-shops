@@ -11,11 +11,11 @@ public enum CommandSuccess {
 
     private final String message;
 
-    CommandSuccess(String string){
+    CommandSuccess(String string) {
         message = string;
     }
 
-    public String getMessage(){
+    public String getMessage() {
         return message;
     }
 }

@@ -5,6 +5,8 @@ import io.github.toniidev.toniishops.factories.InventoryFactory;
 import io.github.toniidev.toniishops.listener.BlockListener;
 import io.github.toniidev.toniishops.listener.PlayerListener;
 import org.bukkit.Bukkit;
+import org.bukkit.command.PluginCommand;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class ToniiShops extends JavaPlugin {
@@ -13,11 +15,23 @@ public final class ToniiShops extends JavaPlugin {
     public void onEnable() {
         // Plugin startup logic
 
-        Bukkit.getPluginCommand("give-permission").setExecutor(new GivePermission(this));
-        Bukkit.getPluginCommand("remove-permission").setExecutor(new RemovePermission(this));
-        Bukkit.getPluginCommand("manage-shops").setExecutor(new ManageShops(this));
-        Bukkit.getPluginCommand("browse-shops").setExecutor(new BrowseShops(this));
-        Bukkit.getPluginCommand("create-shop").setExecutor(new CreateShop());
+        PluginCommand givePermission = Bukkit.getPluginCommand("give-permission");
+        PluginCommand removePermission = Bukkit.getPluginCommand("remove-permission");
+        PluginCommand manageShops = Bukkit.getPluginCommand("manage-shops");
+        PluginCommand browseShops = Bukkit.getPluginCommand("browse-shops");
+        PluginCommand createShop = Bukkit.getPluginCommand("create-shop");
+
+        assert givePermission != null;
+        assert removePermission != null;
+        assert manageShops != null;
+        assert browseShops != null;
+        assert createShop != null;
+
+        givePermission.setExecutor(new GivePermission(this));
+        removePermission.setExecutor(new RemovePermission(this));
+        manageShops.setExecutor(new ManageShops(this));
+        browseShops.setExecutor(new BrowseShops(this));
+        createShop.setExecutor(new CreateShop());
 
         Bukkit.getPluginManager().registerEvents(new BlockListener(this), this);
         Bukkit.getPluginManager().registerEvents(new InventoryFactory(), this);

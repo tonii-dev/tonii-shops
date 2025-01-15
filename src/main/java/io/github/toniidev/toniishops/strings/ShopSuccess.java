@@ -16,11 +16,11 @@ public enum ShopSuccess {
 
     private final String message;
 
-    ShopSuccess(String string){
+    ShopSuccess(String string) {
         message = string;
     }
 
-    public String getMessage(){
+    public String getMessage() {
         return message;
     }
 }

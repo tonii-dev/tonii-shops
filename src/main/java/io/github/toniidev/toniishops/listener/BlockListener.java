@@ -20,9 +20,10 @@ public class BlockListener implements Listener {
 
     /**
      * The BlockListener logic
+     *
      * @param plugin The main plugin instance
      */
-    public BlockListener(Plugin plugin){
+    public BlockListener(Plugin plugin) {
         this.main = plugin;
     }
 
@@ -46,14 +47,14 @@ public class BlockListener implements Listener {
 
         e.setCancelled(true);
 
-        if(!shop.isOwner(e.getPlayer())){
+        if (!shop.isOwner(e.getPlayer())) {
             e.getPlayer().sendMessage(ShopError.NO_OWNER.getMessage());
             return;
         }
 
         BlockFactory.breakShop(e.getBlock().getLocation());
 
-        new BukkitRunnable(){
+        new BukkitRunnable() {
             @Override
             public void run() {
                 e.getBlock().setType(Material.AIR);

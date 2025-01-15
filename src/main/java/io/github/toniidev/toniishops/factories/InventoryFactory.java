@@ -3,7 +3,6 @@ package io.github.toniidev.toniishops.factories;
 import io.github.toniidev.toniishops.interfaces.InventoryInterface;
 import io.github.toniidev.toniishops.utils.InventoryUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -48,7 +47,7 @@ public class InventoryFactory implements Listener {
     /**
      * Initialize a reference to this. It is only used to register Listener
      */
-    public InventoryFactory(){
+    public InventoryFactory() {
 
     }
 
@@ -108,10 +107,11 @@ public class InventoryFactory implements Listener {
     /**
      * Sets a new title for the specified Inventory. It makes it by creating a new Inventory
      * and copying its contents
+     *
      * @param title The new title for the Inventory
      * @return This InventoryFactory instance
      */
-    public InventoryFactory setTitle(String title){
+    public InventoryFactory setTitle(String title) {
         this.inventory = InventoryUtils.cloneInventory(this.inventory, title);
         return this;
     }
@@ -191,11 +191,12 @@ public class InventoryFactory implements Listener {
 
     /**
      * Sets an action to execute when the specified slot gets clicked
-     * @param slot The slot to click to execute the specified action
+     *
+     * @param slot   The slot to click to execute the specified action
      * @param action The action to execute when the specified slot gets clicked
      * @return This InventoryFactory instance
      */
-    public InventoryFactory setAction(int slot, InventoryInterface action){
+    public InventoryFactory setAction(int slot, InventoryInterface action) {
         this.actions.put(slot, action);
         return this;
     }

@@ -19,21 +19,22 @@ public class GivePermission implements CommandExecutor {
 
     /**
      * The GivePermission command logic.
+     *
      * @param plugin The main plugin instance.
      */
-    public GivePermission(Plugin plugin){
+    public GivePermission(Plugin plugin) {
         this.main = plugin;
     }
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] args) {
-        if(!commandSender.isOp()){
+        if (!commandSender.isOp()) {
             commandSender.sendMessage(CommandError.COMMAND_NEEDS_OP.getMessage());
 
             return true;
         }
 
-        if(args.length < 2 || args[0] == null || args[1] == null){
+        if (args.length < 2 || args[0] == null || args[1] == null) {
             commandSender.sendMessage(new StringFactory(CommandError.INVALID_COMMAND_USAGE.getMessage())
                     .append(command.getUsage()).setColor('f')
                     .get());
@@ -43,7 +44,7 @@ public class GivePermission implements CommandExecutor {
 
         Player player = Bukkit.getPlayer(args[0]);
 
-        if(player == null){
+        if (player == null) {
             commandSender.sendMessage(new StringFactory()
                     .append("[tonii-shops]").setColor('a')
                     .append("Command:").setColor('e')
@@ -55,7 +56,7 @@ public class GivePermission implements CommandExecutor {
             return true;
         }
 
-        if(Bukkit.getPluginManager().getPermission(args[1]) == null){
+        if (Bukkit.getPluginManager().getPermission(args[1]) == null) {
             commandSender.sendMessage(new StringFactory()
                     .append("[tonii-shops]").setColor('a')
                     .append("Command:").setColor('e')
@@ -67,7 +68,7 @@ public class GivePermission implements CommandExecutor {
             return true;
         }
 
-        if(player.hasPermission(args[1])){
+        if (player.hasPermission(args[1])) {
             commandSender.sendMessage(CommandError.PLAYER_ALREADY_HAS_PERMISSION.getMessage());
 
             return true;
@@ -82,11 +83,12 @@ public class GivePermission implements CommandExecutor {
      * Gives a permission to a Player. Before using this class, I always make sure
      * that player != null, a permission named %permissionName% exists, and player does not have
      * that permission.
-     * @param player The player we want to give the permission to
+     *
+     * @param player         The player we want to give the permission to
      * @param permissionName The name of the permission that we want to give to the player
-     * @param plugin The main plugin instance
+     * @param plugin         The main plugin instance
      */
-    public static void givePermission(Player player, String permissionName, Plugin plugin){
+    public static void givePermission(Player player, String permissionName, Plugin plugin) {
         PermissionAttachment attachment = player.addAttachment(plugin);
         attachment.setPermission(permissionName, true);
     }

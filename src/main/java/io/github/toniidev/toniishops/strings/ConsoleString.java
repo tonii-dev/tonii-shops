@@ -14,11 +14,11 @@ public enum ConsoleString {
 
     private final String message;
 
-    ConsoleString(String string){
+    ConsoleString(String string) {
         message = string;
     }
 
-    public String getMessage(){
+    public String getMessage() {
         return message;
     }
 }
