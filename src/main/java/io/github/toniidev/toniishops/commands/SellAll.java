@@ -31,7 +31,7 @@ public class SellAll implements CommandExecutor {
             return true;
         }
 
-        if(player.getInventory().getItemInMainHand().getType().equals(Material.AIR)){
+        if (player.getInventory().getItemInMainHand().getType().equals(Material.AIR)) {
             player.sendMessage(GlobalShopError.NOT_ENOUGH_MONEY.getMessage());
             return true;
         }

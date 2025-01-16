@@ -1,7 +1,6 @@
 package io.github.toniidev.toniishops;
 
 import io.github.toniidev.toniishops.classes.GlobalShop;
-import io.github.toniidev.toniishops.classes.GlobalShopItem;
 import io.github.toniidev.toniishops.commands.*;
 import io.github.toniidev.toniishops.factories.InventoryFactory;
 import io.github.toniidev.toniishops.listeners.BlockListener;

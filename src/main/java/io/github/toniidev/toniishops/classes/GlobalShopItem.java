@@ -7,46 +7,51 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import javax.annotation.Nullable;
 import java.util.*;
 
 public class GlobalShopItem {
-    /**
-     * Items of this list are loaded onEnable and
-     * are saved onDisable
-     * TODO: save and load this list's items
-     */
     private long amountOnTheMarket;
 
     private final Material material;
     private final double basePrice;
 
-    public GlobalShopItem(Material itemMaterial, double price, long amount){
+    /**
+     * Creates a new GlobalShopItem instance
+     *
+     * @param itemMaterial The material of the Item linked to this GlobalShopItem instance
+     * @param price        The starting price at which this GlobalShopItem is sold
+     * @param amount       The starting amount of Items of the specified material that will be sold
+     */
+    public GlobalShopItem(Material itemMaterial, double price, long amount) {
         this.material = itemMaterial;
         this.basePrice = price;
         this.amountOnTheMarket = amount;
     }
 
-    private static boolean isTool(Material material){
-        return material.name().endsWith("_SWORD") || material.name().endsWith("_PICKAXE") ||
-                material.name().endsWith("_AXE") || material.name().endsWith("_SHOVEL") ||
-                material.name().endsWith("_HOE");
-    }
-
-    public double getSellPrice(){
+    /**
+     * Default getter for this class
+     *
+     * @return The sell price of this GlobalShopItem instance based on how many items are actually being sold
+     */
+    public double getSellPrice() {
         return IntegerUtils.round(this.basePrice / (1 + (amountOnTheMarket / 100.0)), 2);
     }
 
-    public double getBuyPrice(){
+    /**
+     * Default getter for this class
+     *
+     * @return The buy price of this GlobalShopItem instance based on how many items are actually being sold
+     */
+    public double getBuyPrice() {
         double margin = 10;
         return this.getSellPrice() * (1 + margin);
     }
 
-    public void buyOne(Player player){
+    public void buyOne(Player player) {
         ServerPlayer serverPlayer = ServerPlayer.getPlayer(player);
         assert serverPlayer != null;
 
-        if(!serverPlayer.secureRemoveMoney(this.getBuyPrice())) return;
+        if (!serverPlayer.secureRemoveMoney(this.getBuyPrice())) return;
 
         // TODO: Make a method to ensure player gets the Item: if playerInventory is full, items will be sent to stashed, etc...
         player.getInventory().addItem(new ItemStack(this.material));
@@ -54,22 +59,16 @@ public class GlobalShopItem {
         this.amountOnTheMarket--;
     }
 
-    public void increaseAmount(){
+    public void increaseAmount() {
         this.amountOnTheMarket++;
     }
 
-    public static void sellOne(Player player, Material materialToSell){
-        ServerPlayer serverPlayer = ServerPlayer.getPlayer(player);
-        assert serverPlayer != null;
-
-        GlobalShopItem item = GlobalShop.getItem(materialToSell);
-        if(item == null) return;
-
-        serverPlayer.addMoney(item.getSellPrice());
-        item.increaseAmount();
-    }
-
-    public void sellOne(Player player){
+    /**
+     * Sells one Item from the ItemStack that the specified player has in main hand
+     *
+     * @param player The player that is selling the items
+     */
+    public void sellOne(Player player) {
         ServerPlayer serverPlayer = ServerPlayer.getPlayer(player);
         assert serverPlayer != null;
 
@@ -83,17 +82,18 @@ public class GlobalShopItem {
     }
 
     /**
-     * Sells the specified number
-     * @param player
-     * @param amount
+     * Adds the specified number of Items on the Global Server market
+     *
+     * @param player The player that sold these items
+     * @param amount The amount of Items to sell on the shop
      */
-    public void sellCustomAmount(Player player, long amount){
+    public void sellCustomAmount(Player player, long amount) {
         ServerPlayer serverPlayer = ServerPlayer.getPlayer(player);
         assert serverPlayer != null;
 
         double cumulativePrice = 0.0;
 
-        for(long i = 0; i < amount; i++){
+        for (long i = 0; i < amount; i++) {
             cumulativePrice += this.getSellPrice();
             serverPlayer.addMoney(this.getSellPrice());
             this.increaseAmount();
@@ -114,6 +114,7 @@ public class GlobalShopItem {
 
     /**
      * Default getter for this class
+     *
      * @return The material linked to this GlobalShopItem instance
      */
     public Material getMaterial() {
@@ -122,18 +123,20 @@ public class GlobalShopItem {
 
     /**
      * Default getter for this class
+     *
      * @return The amount of items of the type of this GlobalShopItem that are being currently
      * sold on the market
      */
-    public long getAmountOnTheMarket(){
+    public long getAmountOnTheMarket() {
         return this.amountOnTheMarket;
     }
 
     /**
      * Adds the specified number of items of this type to the market
+     *
      * @param amount The amount of items of this type that have to be added to the market
      */
-    public void addToTheMarket(long amount){
+    public void addToTheMarket(long amount) {
         this.amountOnTheMarket += amount;
     }
 }

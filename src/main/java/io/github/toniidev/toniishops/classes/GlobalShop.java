@@ -16,28 +16,30 @@ public class GlobalShop {
     /**
      * Items of this list are loaded onEnable and
      * are saved onDisable
-     * TODO: save and load this list's items
+     * TODO: Save and load this list's items
      */
     public static List<GlobalShopItem> shop = new ArrayList<>();
 
     /**
      * Tells whether shop is selling the specified material or not
+     *
      * @param material The material we need to know whether the shop is selling or not
      * @return true if the Material is actually being sold by the Global Shop, false if
      * it isn't
      */
-    public static boolean contains(Material material){
+    public static boolean contains(Material material) {
         return getItem(material) != null;
     }
 
     /**
      * Gets the GlobalShopItem instance linked to the specified material
+     *
      * @param material The material we need the GlobalShopItem instance of
      * @return The GlobalShopItem linked to the specified material if it exists,
      * null if it doesn't exist
      */
     @Nullable
-    public static GlobalShopItem getItem(Material material){
+    public static GlobalShopItem getItem(Material material) {
         return GlobalShop.shop.stream()
                 .filter(x -> x.getMaterial().equals(material))
                 .findFirst().orElse(null);
@@ -45,14 +47,15 @@ public class GlobalShop {
 
     /**
      * Initializes the shop by adding 200 items of all missing materials to it.
-     * @param amountOfItemsOfEachMaterialToAdd The exact amount of items of each missing material to add to the market
      * TODO: Add ores starting price
+     *
+     * @param amountOfItemsOfEachMaterialToAdd The exact amount of items of each missing material to add to the market
      */
-    public static void initializeShop(long amountOfItemsOfEachMaterialToAdd){
-        for(Material material : Material.values()){
-            if(!GlobalShop.contains(material)){
+    public static void initializeShop(long amountOfItemsOfEachMaterialToAdd) {
+        for (Material material : Material.values()) {
+            if (!GlobalShop.contains(material)) {
                 double price = 200.0;
-                if(ItemUtils.isToolMaterial(material)){
+                if (ItemUtils.isToolMaterial(material)) {
                     price = GlobalShop.getToolPrice(material);
                 }
 
@@ -72,6 +75,7 @@ public class GlobalShop {
      * Iron tools have a starting price of 600,
      * Diamond tools have a starting price of 800,
      * Netherite tools have a starting price of 1000.
+     *
      * @param material The material of the tool that we have to get the default price of
      * @return The default price for the specified tool material
      */
