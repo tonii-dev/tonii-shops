@@ -1,8 +1,10 @@
 package io.github.toniidev.toniishops.classes;
 
+import io.github.toniidev.toniishops.enums.ShopItemType;
 import io.github.toniidev.toniishops.factories.StringFactory;
 import io.github.toniidev.toniishops.strings.GlobalShopSuccess;
 import io.github.toniidev.toniishops.utils.IntegerUtils;
+import io.github.toniidev.toniishops.utils.ItemUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -14,6 +16,7 @@ public class GlobalShopItem {
 
     private final Material material;
     private final double basePrice;
+    private final ShopItemType shopItemType;
 
     /**
      * Creates a new GlobalShopItem instance
@@ -26,6 +29,7 @@ public class GlobalShopItem {
         this.material = itemMaterial;
         this.basePrice = price;
         this.amountOnTheMarket = amount;
+        this.shopItemType = ItemUtils.classify(itemMaterial);
     }
 
     /**
@@ -47,6 +51,20 @@ public class GlobalShopItem {
         return this.getSellPrice() * (1 + margin);
     }
 
+    /**
+     * Default getter for this class
+     *
+     * @return Returns the ShopItemType of the Item linked to this GlobalShopItem instance
+     */
+    public ShopItemType getShopItemType() {
+        return this.shopItemType;
+    }
+
+    /**
+     * Buys one of the available items linked to this GlobalShopItem instance
+     *
+     * @param player The player that buys the items
+     */
     public void buyOne(Player player) {
         ServerPlayer serverPlayer = ServerPlayer.getPlayer(player);
         assert serverPlayer != null;
@@ -59,7 +77,11 @@ public class GlobalShopItem {
         this.amountOnTheMarket--;
     }
 
-    public void increaseAmount() {
+    /**
+     * Increases the amount of Items of the Material linked to this GlobalShopItem instance
+     * that are currently being sold on the market
+     */
+    private void increaseAmount() {
         this.amountOnTheMarket++;
     }
 

@@ -55,7 +55,7 @@ public class GlobalShop {
         for (Material material : Material.values()) {
             if (!GlobalShop.contains(material)) {
                 double price = 200.0;
-                if (ItemUtils.isToolMaterial(material)) {
+                if (ItemUtils.isTool(material)) {
                     price = GlobalShop.getToolPrice(material);
                 }
 
