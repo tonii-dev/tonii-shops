@@ -1,5 +1,8 @@
 package io.github.toniidev.toniishops.utils;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 public class IntegerUtils {
     /**
      * Find the minimum amount of rows an Inventory has to be done of based on how many ItemStacks
@@ -18,5 +21,17 @@ public class IntegerUtils {
         else if (numberOfItemsToPutIntoInventory <= 36) return 4;
         else if (numberOfItemsToPutIntoInventory <= 45) return 5;
         else return 6;
+    }
+
+    /**
+     * Rounds the specified number to the specified decimal places
+     * @param number The double to round
+     * @param decimalPlaces The decimal places to round the number to
+     * @return The specified double rounded to the specified decimal place
+     */
+    public static double round(Double number, int decimalPlaces){
+        BigDecimal bd = new BigDecimal(number);
+        bd = bd.setScale(decimalPlaces, RoundingMode.HALF_UP);  // Round to the specified number of decimals
+        return bd.doubleValue();
     }
 }

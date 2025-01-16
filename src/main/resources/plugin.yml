@@ -9,6 +9,8 @@ permissions:
     description: Allows the player to manage his shops
   shop-browsing:
     description: Allows the player to browse other players' shops
+  item-selling:
+    description: Allows the player to sell his items to the Global Server Shop.
 commands:
   give-permission:
     usage: /give-permission <user> <permission>
@@ -25,3 +27,9 @@ commands:
   browse-shops:
     usage: /<command>
     description: Shows a GUI that allows the player to browse all the other shops
+  sell-item:
+    usage: /<command>
+    description: Sells one item of the currently held item stack to the server global shop
+  sell-all:
+    usage: /<command>
+    description: Sells the entire currently held item stack to the server global shop

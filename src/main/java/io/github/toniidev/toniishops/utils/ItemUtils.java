@@ -2,6 +2,7 @@ package io.github.toniidev.toniishops.utils;
 
 import io.github.toniidev.toniishops.strings.ConsoleString;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -66,5 +67,16 @@ public class ItemUtils {
 
         meta.setDisplayName(name);
         itemStack.setItemMeta(meta);
+    }
+
+    /**
+     * Tells whether the given material is a tool or not
+     * @param material The material to check whether is a tool or not
+     * @return true if the given material is a tool material, false if it's not
+     */
+    public static boolean isToolMaterial(Material material){
+        return material.name().endsWith("_SWORD") || material.name().endsWith("_PICKAXE") ||
+                material.name().endsWith("_AXE") || material.name().endsWith("_SHOVEL") ||
+                material.name().endsWith("_HOE");
     }
 }
