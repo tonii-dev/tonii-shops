@@ -25,11 +25,11 @@ public class GlobalShopItem {
      * @param price        The starting price at which this GlobalShopItem is sold
      * @param amount       The starting amount of Items of the specified material that will be sold
      */
-    public GlobalShopItem(Material itemMaterial, double price, long amount) {
+    public GlobalShopItem(Material itemMaterial, double price, long amount, ShopItemType type) {
         this.material = itemMaterial;
         this.basePrice = price;
         this.amountOnTheMarket = amount;
-        this.shopItemType = ItemUtils.classify(itemMaterial);
+        this.shopItemType = type;
     }
 
     /**

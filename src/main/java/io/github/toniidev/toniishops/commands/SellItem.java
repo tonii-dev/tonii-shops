@@ -2,11 +2,9 @@ package io.github.toniidev.toniishops.commands;
 
 import io.github.toniidev.toniishops.classes.GlobalShop;
 import io.github.toniidev.toniishops.classes.GlobalShopItem;
-import io.github.toniidev.toniishops.factories.StringFactory;
 import io.github.toniidev.toniishops.strings.CommandError;
 import io.github.toniidev.toniishops.strings.ConsoleString;
 import io.github.toniidev.toniishops.strings.GlobalShopError;
-import io.github.toniidev.toniishops.strings.GlobalShopSuccess;
 import io.github.toniidev.toniishops.utils.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -34,7 +32,12 @@ public class SellItem implements CommandExecutor {
         }
 
         if (player.getInventory().getItemInMainHand().getType().equals(Material.AIR)) {
-            player.sendMessage(GlobalShopError.NOT_ENOUGH_MONEY.getMessage());
+            player.sendMessage(GlobalShopError.INVALID_ITEM.getMessage());
+            return true;
+        }
+
+        if(!GlobalShop.canSell(player.getInventory().getItemInMainHand().getType())){
+            player.sendMessage(GlobalShopError.ITEM_CANNOT_BE_SOLD.getMessage());
             return true;
         }
 
