@@ -16,7 +16,7 @@ public class ServerPlayer {
     /**
      * Items of this list are loaded onEnable and
      * are saved onDisable
-     * TODO: save and load this list's items
+     * TODO: Save and load this list's items
      */
     public static List<ServerPlayer> serverPlayers = new ArrayList<>();
 

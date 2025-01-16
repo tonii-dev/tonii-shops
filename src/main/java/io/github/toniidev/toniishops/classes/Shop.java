@@ -23,7 +23,7 @@ public class Shop {
     /**
      * Items of this list are loaded onEnable and
      * are saved onDisable
-     * TODO: save and load this list's items
+     * TODO: Save and load this list's items
      */
     public final static List<Shop> shops = new ArrayList<>();
 
