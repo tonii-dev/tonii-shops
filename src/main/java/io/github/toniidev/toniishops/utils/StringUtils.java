@@ -15,6 +15,43 @@ public class StringUtils {
     private static final Set<String> generatedSerials = new HashSet<>();
 
     /**
+     * Tells whether the given material name contains the specified field.
+     * For example, let's suppose to call this function like this: doesMaterialContainField(Material.OAK_LOG, "log")
+     * I consider a "material name field" every object that is in the Array obtained with material.name().split("_").
+     * Material.OAK_LOG contains 2 fields: "oak" and "log". So, because one of the fields is equal to the given field
+     * to search for, this function will return true.
+     *
+     * @param materialName The name of the Material we must check whether contains the specified field or not
+     * @param field        The field to know whether is contained in the material name or not
+     * @return true if the name of the specified material contains the specified field,
+     * false if the name of the specified material doesn't contain the specified field
+     */
+    public static boolean doesMaterialNameContainField(String materialName, String field) {
+        return Arrays.stream(materialName.toLowerCase().split("_"))
+                .filter(x -> x.equals(field.toLowerCase()))
+                .findFirst().orElse(null) != null;
+    }
+
+    /**
+     * doesMaterialNameContainField() made compatible with checking Strings with multiple fields, for example:
+     * doesMaterialContainField(Material.OAK_LOG, "oak_log"). It is different between String#contains() because
+     * String#contains does not split the string considering "_".
+     *
+     * @param materialName The name of the Material we must check whether contains the specified string fields or not
+     * @param string       The string to know whether is contained in the material name or not
+     * @return true if the name of the specified material contains the specified string,
+     * false if the name of the specified material doesn't contain the specified string
+     */
+    public static boolean doesMaterialNameContainString(String materialName, String string) {
+        for (String s : string.split("_")) {
+            if (!doesMaterialNameContainField(materialName, s)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * Edits the given string, so that the colorPrefix gets replaced with the character
      * that in Minecraft must be placed before any color code to give a color to a String
      *

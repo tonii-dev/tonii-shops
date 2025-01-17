@@ -5,7 +5,9 @@ import io.github.toniidev.toniishops.commands.*;
 import io.github.toniidev.toniishops.factories.InventoryFactory;
 import io.github.toniidev.toniishops.listeners.BlockListener;
 import io.github.toniidev.toniishops.listeners.PlayerListener;
+import io.github.toniidev.toniishops.utils.StringUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 

@@ -1,6 +1,7 @@
 package io.github.toniidev.toniishops.classes;
 
 import io.github.toniidev.toniishops.enums.ShopItemType;
+import io.github.toniidev.toniishops.utils.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 
@@ -35,16 +36,9 @@ public class GlobalShop {
     );
 
     public static final Map<String, Double> DECORATION_PRICES = Map.ofEntries(
+            Map.entry("pot", 30.0),
             Map.entry("flower", 10.0),
             Map.entry("banner", 50.0),
-            Map.entry("white_banner", 55.0),
-            Map.entry("red_banner", 55.0),
-            Map.entry("blue_banner", 55.0),
-            Map.entry("yellow_banner", 55.0),
-            Map.entry("black_banner", 60.0),
-            Map.entry("green_banner", 55.0),
-            Map.entry("gray_banner", 60.0),
-            Map.entry("rose_bush", 15.0),
             Map.entry("peony", 15.0),
             Map.entry("lilac", 15.0),
             Map.entry("sunflower", 20.0),
@@ -52,16 +46,11 @@ public class GlobalShop {
             Map.entry("dandelion", 8.0),
             Map.entry("cornflower", 12.0),
             Map.entry("allium", 12.0),
-            Map.entry("oxeye_daisy", 10.0),
+            Map.entry("daisy", 10.0),
             Map.entry("poppy", 10.0),
-            Map.entry("skeleton_skull", 100.0),
-            Map.entry("wither_skeleton_skull", 150.0),
-            Map.entry("zombie_head", 100.0),
-            Map.entry("player_head", 200.0),
+            Map.entry("skull", 100.0),
             Map.entry("item_frame", 40.0),
             Map.entry("painting", 60.0),
-            Map.entry("flower_pot", 30.0),
-            Map.entry("ender_chest", 150.0),
             Map.entry("lava", 50.0),
             Map.entry("water", 20.0)
     );
@@ -72,7 +61,7 @@ public class GlobalShop {
             Map.entry("dirt", 10.0),
             Map.entry("grass", 15.0),
             Map.entry("terracotta", 300.0),
-            Map.entry("clay", 90.0),
+            Map.entry("concrete", 500.0),
             Map.entry("quartz", 500.0),
             Map.entry("glass", 300.0),
             Map.entry("log", 200.0),
@@ -81,39 +70,31 @@ public class GlobalShop {
             Map.entry("fence", 250.0),
             Map.entry("trapdoor", 300.0),
             Map.entry("door", 300.0),
-            Map.entry("nether_brick", 80.0),
             Map.entry("glowstone", 200.0),
-            Map.entry("sea_lantern", 180.0),
+            Map.entry("lantern", 180.0),
             Map.entry("sandstone", 40.0),
-            Map.entry("smooth_sandstone", 50.0),
-            Map.entry("cut_sandstone", 60.0),
-            Map.entry("blue_ice", 300.0),
             Map.entry("brick", 50.0)
     );
 
     public static final Map<String, Double> FOOD_PRICES = Map.ofEntries(
             Map.entry("bread", 20.0),
+            Map.entry("enchanted", 500.0),
+            Map.entry("golden", 100.0),
             Map.entry("apple", 10.0),
-            Map.entry("cooked_beef", 30.0),
-            Map.entry("cooked_chicken", 25.0),
+            Map.entry("cooked", 35.0),
+            Map.entry("chicken", 25.0),
             Map.entry("porkchop", 25.0),
-            Map.entry("cooked_porkchop", 35.0),
-            Map.entry("mushroom_stew", 50.0),
-            Map.entry("beetroot_soup", 15.0),
+            Map.entry("stew", 50.0),
+            Map.entry("beetroot", 15.0),
             Map.entry("carrot", 10.0),
             Map.entry("potato", 15.0),
-            Map.entry("cooked_potato", 20.0),
-            Map.entry("golden_apple", 100.0),
-            Map.entry("enchanted_golden_apple", 500.0),
             Map.entry("cake", 60.0),
             Map.entry("cookie", 10.0),
             Map.entry("melon", 15.0),
             Map.entry("pufferfish", 40.0),
             Map.entry("salmon", 30.0),
-            Map.entry("cooked_salmon", 40.0),
             Map.entry("clownfish", 40.0),
-            Map.entry("sweet_berries", 15.0),
-            Map.entry("suspicious_stew", 50.0)
+            Map.entry("berries", 15.0)
     );
 
     public static final Map<String, Double> ITEM_PRICES = Map.ofEntries(
@@ -126,12 +107,12 @@ public class GlobalShop {
             Map.entry("fire_charge", 15.0),
             Map.entry("compass", 50.0),
             Map.entry("clock", 60.0),
-            Map.entry("glowstone_dust", 30.0),
-            Map.entry("blaze_powder", 40.0),
+            Map.entry("dust", 30.0),
+            Map.entry("powder", 40.0),
             Map.entry("slimeball", 50.0),
             Map.entry("gunpowder", 20.0),
-            Map.entry("ender_pearl", 100.0),
-            Map.entry("nether_wart", 30.0),
+            Map.entry("pearl", 100.0),
+            Map.entry("wart", 30.0),
             Map.entry("wheat", 15.0)
     );
 
@@ -149,7 +130,9 @@ public class GlobalShop {
             "horse",
             "bow",
             "totem",
-            "block"
+            "block",
+            "bottle",
+            "on_a_stick"
     );
 
     /**
@@ -197,7 +180,7 @@ public class GlobalShop {
                             info.getKey());
                     GlobalShop.shop.add(item);
                     Bukkit.getLogger().info("Successfully added " + amountOfItemsOfEachMaterialToAdd + " items of " + material +
-                            " to the global shop.");
+                            " to the global shop. Item type: " + item.getShopItemType());
                     i++;
                 }
             }
@@ -215,7 +198,7 @@ public class GlobalShop {
     public static boolean canSell(Material material) {
         boolean allowedWord = true;
         for(String word : PROHIBITED_WORDS){
-            if(material.name().toLowerCase().contains(word)) allowedWord = false;
+            if(StringUtils.doesMaterialNameContainString(material.name(), word)) allowedWord = false;
         }
 
         return getDefaultPrice(material) != 0.0 && allowedWord;
@@ -250,7 +233,7 @@ public class GlobalShop {
 
         for (int i = 0; i < maps.size(); i++) {
             for (Map.Entry<String, Double> entry : maps.get(i).entrySet()) {
-                if (materialName.contains(entry.getKey())) {
+                if(StringUtils.doesMaterialNameContainString(materialName, entry.getKey())){
                     return new AbstractMap.SimpleEntry<>(types.get(i), entry.getValue());
                 }
             }
