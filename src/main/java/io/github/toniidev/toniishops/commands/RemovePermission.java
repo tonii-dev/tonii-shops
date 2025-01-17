@@ -3,6 +3,7 @@ package io.github.toniidev.toniishops.commands;
 import io.github.toniidev.toniishops.factories.StringFactory;
 import io.github.toniidev.toniishops.strings.CommandError;
 import io.github.toniidev.toniishops.strings.CommandSuccess;
+import io.github.toniidev.toniishops.utils.CommandUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -33,6 +34,8 @@ public class RemovePermission implements CommandExecutor {
 
             return true;
         }
+
+        if(CommandUtils.checkBaseArgs(args, (Player) commandSender, command)) return true;
 
         if (args.length < 2 || args[0] == null || args[1] == null) {
             commandSender.sendMessage(new StringFactory(CommandError.INVALID_COMMAND_USAGE.getMessage())

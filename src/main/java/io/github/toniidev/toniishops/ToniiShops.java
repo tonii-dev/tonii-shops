@@ -5,6 +5,7 @@ import io.github.toniidev.toniishops.commands.*;
 import io.github.toniidev.toniishops.factories.InventoryFactory;
 import io.github.toniidev.toniishops.listeners.BlockListener;
 import io.github.toniidev.toniishops.listeners.PlayerListener;
+import io.github.toniidev.toniishops.utils.InitializeUtils;
 import io.github.toniidev.toniishops.utils.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -15,31 +16,14 @@ public final class ToniiShops extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        // Plugin startup logic
-
-        PluginCommand givePermission = Bukkit.getPluginCommand("give-permission");
-        PluginCommand removePermission = Bukkit.getPluginCommand("remove-permission");
-        PluginCommand manageShops = Bukkit.getPluginCommand("manage-shops");
-        PluginCommand browseShops = Bukkit.getPluginCommand("browse-shops");
-        PluginCommand createShop = Bukkit.getPluginCommand("create-shop");
-        PluginCommand sellItem = Bukkit.getPluginCommand("sell-item");
-        PluginCommand sellAll = Bukkit.getPluginCommand("sell-all");
-
-        assert givePermission != null;
-        assert removePermission != null;
-        assert manageShops != null;
-        assert browseShops != null;
-        assert createShop != null;
-        assert sellItem != null;
-        assert sellAll != null;
-
-        givePermission.setExecutor(new GivePermission(this));
-        removePermission.setExecutor(new RemovePermission(this));
-        manageShops.setExecutor(new ManageShops(this));
-        browseShops.setExecutor(new BrowseShops(this));
-        createShop.setExecutor(new CreateShop());
-        sellItem.setExecutor(new SellItem());
-        sellAll.setExecutor(new SellAll());
+        // Plugin startup
+        new InitializeUtils(new GivePermission(this), "give-permission").initialize();
+        new InitializeUtils(new RemovePermission(this), "remove-permission").initialize();
+        new InitializeUtils(new ManageShops(this), "manage-shops").initialize();
+        new InitializeUtils(new BrowseShops(this), "browse-shops").initialize();
+        new InitializeUtils(new CreateShop(), "create-shop").initialize();
+        new InitializeUtils(new SellItem(), "sell-item").initialize();
+        new InitializeUtils(new SellAll(), "sell-all").initialize();
 
         Bukkit.getPluginManager().registerEvents(new BlockListener(this), this);
         Bukkit.getPluginManager().registerEvents(new InventoryFactory(), this);

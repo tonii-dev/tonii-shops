@@ -13,23 +13,30 @@ permissions:
     description: Allows the player to sell his items to the Global Server Shop.
 commands:
   give-permission:
+    aliases: [givepermission, giveperm, givep, give-perm, give-p]
     usage: /give-permission <user> <permission>
     description: Gives a permission to a player
   remove-permission:
+    aliases: [removepermission, removeperm, removep, remove-perm, remove-p]
     usage: /remove-permission <user> <permission>
     description: Removes a permission from a player
   create-shop:
+    aliases: [createshop, createsh, create-sh]
     usage: /<command>
     description: Gives the player a chest items in which will be sold at a fixed price that he can choose
   manage-shops:
+    aliases: [manageshops, managesh, manage-sh]
     usage: /<command>
     description: Shows a GUI that allows the player to manage the shops that he owns
   browse-shops:
+    aliases: [browseshops, browsesh, browse-sh]
     usage: /<command>
     description: Shows a GUI that allows the player to browse all the other shops
   sell-item:
+    aliases: [sellitem, sellone, sell-one]
     usage: /<command>
     description: Sells one item of the currently held item stack to the server global shop
   sell-all:
+    aliases: [sellhand, sellall, sellh, sell-hand, sell-all, sell-h]
     usage: /<command>
     description: Sells the entire currently held item stack to the server global shop

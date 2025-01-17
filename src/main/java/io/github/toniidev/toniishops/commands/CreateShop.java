@@ -3,6 +3,7 @@ package io.github.toniidev.toniishops.commands;
 import io.github.toniidev.toniishops.classes.Shop;
 import io.github.toniidev.toniishops.strings.ConsoleString;
 import io.github.toniidev.toniishops.strings.CommandError;
+import io.github.toniidev.toniishops.utils.CommandUtils;
 import io.github.toniidev.toniishops.utils.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -30,6 +31,8 @@ public class CreateShop implements CommandExecutor {
                     StringUtils.formatColorCodes('&', "&r&f" + permission.getName()));
             return true;
         }
+
+        if(CommandUtils.checkBaseArgs(strings, player, command)) return true;
 
         player.getInventory().addItem(Shop.item.clone());
         return true;

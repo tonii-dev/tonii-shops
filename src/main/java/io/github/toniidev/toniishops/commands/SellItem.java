@@ -5,6 +5,7 @@ import io.github.toniidev.toniishops.classes.GlobalShopItem;
 import io.github.toniidev.toniishops.strings.CommandError;
 import io.github.toniidev.toniishops.strings.ConsoleString;
 import io.github.toniidev.toniishops.strings.GlobalShopError;
+import io.github.toniidev.toniishops.utils.CommandUtils;
 import io.github.toniidev.toniishops.utils.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -30,6 +31,8 @@ public class SellItem implements CommandExecutor {
                     StringUtils.formatColorCodes('&', "&r&f" + permission.getName()));
             return true;
         }
+
+        if(CommandUtils.checkBaseArgs(strings, player, command)) return true;
 
         if (player.getInventory().getItemInMainHand().getType().equals(Material.AIR)) {
             player.sendMessage(GlobalShopError.INVALID_ITEM.getMessage());

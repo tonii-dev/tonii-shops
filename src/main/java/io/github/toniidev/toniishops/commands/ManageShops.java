@@ -6,6 +6,7 @@ import io.github.toniidev.toniishops.factories.ItemStackFactory;
 import io.github.toniidev.toniishops.strings.ConsoleString;
 import io.github.toniidev.toniishops.strings.CommandError;
 import io.github.toniidev.toniishops.strings.ShopError;
+import io.github.toniidev.toniishops.utils.CommandUtils;
 import io.github.toniidev.toniishops.utils.IntegerUtils;
 import io.github.toniidev.toniishops.utils.StringUtils;
 import org.bukkit.Bukkit;
@@ -46,6 +47,8 @@ public class ManageShops implements CommandExecutor {
                     StringUtils.formatColorCodes('&', "&r&f" + permission.getName()));
             return true;
         }
+
+        if(CommandUtils.checkBaseArgs(strings, player, command)) return true;
 
         List<Shop> playerShops = Shop.getPlayerShops(player);
         if (playerShops == null) {
