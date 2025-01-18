@@ -240,4 +240,60 @@ public class GlobalShop {
         }
         return null;
     }
+
+    public static Inventory getHome(Plugin plugin){
+        return new InventoryFactory(5, "Global shop", main)
+        .setItem(11, ShopItemType.BLOCK.getItem())
+        .setItem(12, ShopItemType.ORE.getItem())
+        .setItem(13, ShopItemType.ITEM.getItem())
+        .setItem(14, ShopItemType.FOOD.getItem())
+        .setItem(15, ShopItemType.DECORATIVE.getItem())
+        .setItem(31, new ItemStackFactory(Material.PAPER)
+        .setName(StringUtils.formatColorCodes('&', "&9&lInfo"))
+        .addLoreLine("Real time informations about the Shop status")
+        .addBlankLine()
+        .addLoreLine(new StringFactory()
+        .append("Items currently being sold:").setColor('7')
+        .append(String.valueOf(getAmountOfItems).setColor('f'))
+        .get())
+        .addBlankLoreLine()
+        .addLoreLine(new StringFactory()
+        .append("Medium item buy price:").setColor('7')
+        .append(getMediumBuyPrice() + '$').setColor('f')
+        .get())
+        .addLoreLine(new StringFactory()
+        .append("Medium item sell price:").setColor('7')
+        .append(getMediumSellPrice() + '$').setColor('f')
+        .get()))
+    }
+
+    private static long getAmountOfItems(){
+        long value = 0;
+
+        for(GlobalShopItem item : GlobalShop.shops){
+            value += item.getAmountOnTheMarket();
+        }
+
+        return value;
+    }
+
+    private static double getMediumBuyPrice() {
+        double value = 0;
+
+        for(GlobalShopItem item : GlobalShop.shops){
+            value += item.getBuyPrice();
+        }
+
+        return IntegerUtils.round((value / getAmountOfItems()), 2)
+    }
+
+    private static double getMediumSellPrice(){
+        double value = 0;
+
+        for(GlobalShopItem item : GlobalShop.shops){
+            value += item.getSellPrice();
+        }
+
+        return IntegerUtils.round((value / getAmountOfItems()), 2)
+    }
 }
