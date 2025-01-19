@@ -1,9 +1,20 @@
 package io.github.toniidev.toniishops.classes;
 
 import io.github.toniidev.toniishops.enums.ShopItemType;
+import io.github.toniidev.toniishops.factories.InventoryFactory;
+import io.github.toniidev.toniishops.factories.ItemStackFactory;
+import io.github.toniidev.toniishops.factories.MultipleInventoryFactory;
+import io.github.toniidev.toniishops.factories.StringFactory;
+import io.github.toniidev.toniishops.interfaces.InventoryInterface;
+import io.github.toniidev.toniishops.utils.IntegerUtils;
 import io.github.toniidev.toniishops.utils.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
+import org.checkerframework.checker.units.qual.A;
 
 import javax.annotation.Nullable;
 import java.util.AbstractMap;
@@ -19,7 +30,6 @@ public class GlobalShop {
      * Items of this list are loaded onEnable and
      * are saved onDisable
      * TODO: Save and load this list's items
-     * TODO: too many items showing
      */
     public static List<GlobalShopItem> shop = new ArrayList<>();
 
@@ -56,13 +66,14 @@ public class GlobalShop {
     );
 
     public static final Map<String, Double> BLOCK_PRICES = Map.ofEntries(
+            Map.entry("quartz", 500.0),
+            Map.entry("stairs", 250.0),
             Map.entry("smooth", 200.0),
             Map.entry("stone", 50.0),
             Map.entry("dirt", 10.0),
             Map.entry("grass", 15.0),
             Map.entry("terracotta", 300.0),
             Map.entry("concrete", 500.0),
-            Map.entry("quartz", 500.0),
             Map.entry("glass", 300.0),
             Map.entry("log", 200.0),
             Map.entry("wood", 200.0),
@@ -73,7 +84,7 @@ public class GlobalShop {
             Map.entry("glowstone", 200.0),
             Map.entry("lantern", 180.0),
             Map.entry("sandstone", 40.0),
-            Map.entry("brick", 50.0)
+            Map.entry("bricks", 50.0)
     );
 
     public static final Map<String, Double> FOOD_PRICES = Map.ofEntries(
@@ -197,8 +208,8 @@ public class GlobalShop {
      */
     public static boolean canSell(Material material) {
         boolean allowedWord = true;
-        for(String word : PROHIBITED_WORDS){
-            if(StringUtils.doesMaterialNameContainString(material.name(), word)) allowedWord = false;
+        for (String word : PROHIBITED_WORDS) {
+            if (StringUtils.doesMaterialNameContainString(material.name(), word)) allowedWord = false;
         }
 
         return getDefaultPrice(material) != 0.0 && allowedWord;
@@ -233,7 +244,7 @@ public class GlobalShop {
 
         for (int i = 0; i < maps.size(); i++) {
             for (Map.Entry<String, Double> entry : maps.get(i).entrySet()) {
-                if(StringUtils.doesMaterialNameContainString(materialName, entry.getKey())){
+                if (StringUtils.doesMaterialNameContainString(materialName, entry.getKey())) {
                     return new AbstractMap.SimpleEntry<>(types.get(i), entry.getValue());
                 }
             }
@@ -241,36 +252,73 @@ public class GlobalShop {
         return null;
     }
 
-    public static Inventory getHome(Plugin plugin){
-        return new InventoryFactory(5, "Global shop", main)
-        .setItem(11, ShopItemType.BLOCK.getItem())
-        .setItem(12, ShopItemType.ORE.getItem())
-        .setItem(13, ShopItemType.ITEM.getItem())
-        .setItem(14, ShopItemType.FOOD.getItem())
-        .setItem(15, ShopItemType.DECORATIVE.getItem())
-        .setItem(31, new ItemStackFactory(Material.PAPER)
-        .setName(StringUtils.formatColorCodes('&', "&9&lInfo"))
-        .addLoreLine("Real time informations about the Shop status")
-        .addBlankLine()
-        .addLoreLine(new StringFactory()
-        .append("Items currently being sold:").setColor('7')
-        .append(String.valueOf(getAmountOfItems).setColor('f'))
-        .get())
-        .addBlankLoreLine()
-        .addLoreLine(new StringFactory()
-        .append("Medium item buy price:").setColor('7')
-        .append(getMediumBuyPrice() + '$').setColor('f')
-        .get())
-        .addLoreLine(new StringFactory()
-        .append("Medium item sell price:").setColor('7')
-        .append(getMediumSellPrice() + '$').setColor('f')
-        .get()))
+    public static Inventory getBlocksShop(Plugin plugin){
+        List<ItemStack> blocks = new ArrayList<>();
+        InventoryFactory factory = new InventoryFactory(6, " ", plugin)
+                .setClicksAllowed(false)
+                .setInventoryToShowOnClose(GlobalShop.getHome(plugin));
+
+        for (GlobalShopItem item : GlobalShop.shop) {
+            if(item.getShopItemType().equals(ShopItemType.BLOCK)){
+                blocks.add(new ItemStackFactory(item.getMaterial())
+                                .addLoreLine(StringUtils.formatColorCodes('&', "&8Block"))
+                        .addBlankLoreLine()
+                        .addLoreLine(new StringFactory()
+                                .append("Buy price:").setColor('7')
+                                .append(item.getBuyPrice() + "$").setColor('6')
+                                .get())
+                        .addLoreLine(new StringFactory()
+                                .append("Sell price:").setColor('7')
+                                .append(item.getSellPrice() + "$").setColor('6')
+                                .get())
+                        .addBlankLoreLine()
+                        .addLoreLine(StringUtils.formatColorCodes('&', "&eClick to view details!"))
+                        .get());
+            }
+        }
+
+        return new MultipleInventoryFactory(blocks, "Blocks", plugin, factory)
+                .get();
     }
 
-    private static long getAmountOfItems(){
+    public static Inventory getHome(Plugin plugin) {
+        return new InventoryFactory(5, "Global shop", plugin)
+                .setItem(11, ShopItemType.BLOCK.getIcon())
+                .setItem(12, ShopItemType.ORE.getIcon())
+                .setItem(13, ShopItemType.ITEM.getIcon())
+                .setItem(14, ShopItemType.FOOD.getIcon())
+                .setItem(15, ShopItemType.DECORATIVE.getIcon())
+                .setItem(31, new ItemStackFactory(Material.PAPER)
+                        .setName(StringUtils.formatColorCodes('&', "&9&lInfo"))
+                        .addLoreLine("Real time informations about the Shop status")
+                        .addBlankLoreLine()
+                        .addLoreLine(new StringFactory()
+                                .append("Items currently being sold:").setColor('7')
+                                .append(String.valueOf(GlobalShop.getAmountOfItems())).setColor('f')
+                                .get())
+                        .addLoreLine(new StringFactory()
+                                .append("Medium item buy price:").setColor('7')
+                                .append(getMediumBuyPrice() + "$").setColor('f')
+                                .get())
+                        .addLoreLine(new StringFactory()
+                                .append("Medium item sell price:").setColor('7')
+                                .append(getMediumSellPrice() + "$").setColor('f')
+                                .get())
+                        .get())
+
+                .setAction(11, e -> e.getWhoClicked().openInventory(getBlocksShop(plugin)))
+
+                .setClicksAllowed(false)
+                .fill(new ItemStackFactory(Material.WHITE_STAINED_GLASS_PANE)
+                        .setName(" ")
+                        .get())
+                .get();
+    }
+
+    private static long getAmountOfItems() {
         long value = 0;
 
-        for(GlobalShopItem item : GlobalShop.shops){
+        for (GlobalShopItem item : GlobalShop.shop) {
             value += item.getAmountOnTheMarket();
         }
 
@@ -280,20 +328,20 @@ public class GlobalShop {
     private static double getMediumBuyPrice() {
         double value = 0;
 
-        for(GlobalShopItem item : GlobalShop.shops){
+        for (GlobalShopItem item : GlobalShop.shop) {
             value += item.getBuyPrice();
         }
 
-        return IntegerUtils.round((value / getAmountOfItems()), 2)
+        return IntegerUtils.round((value / getAmountOfItems()), 2);
     }
 
-    private static double getMediumSellPrice(){
+    private static double getMediumSellPrice() {
         double value = 0;
 
-        for(GlobalShopItem item : GlobalShop.shops){
+        for (GlobalShopItem item : GlobalShop.shop) {
             value += item.getSellPrice();
         }
 
-        return IntegerUtils.round((value / getAmountOfItems()), 2)
+        return IntegerUtils.round((value / getAmountOfItems()), 2);
     }
 }

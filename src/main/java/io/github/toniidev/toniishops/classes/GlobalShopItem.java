@@ -47,8 +47,8 @@ public class GlobalShopItem {
      * @return The buy price of this GlobalShopItem instance based on how many items are actually being sold
      */
     public double getBuyPrice() {
-        double margin = 10;
-        return this.getSellPrice() * (1 + margin);
+        double margin = 1.25;
+        return IntegerUtils.round(this.getSellPrice() * (margin), 2);
     }
 
     /**

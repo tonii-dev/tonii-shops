@@ -1,5 +1,7 @@
 package io.github.toniidev.toniishops.factories;
 
+import org.bukkit.ChatColor;
+
 /**
  * Class used any time we need to create a string with multiple colors
  */
@@ -66,6 +68,12 @@ public class StringFactory {
      */
     public StringFactory setColor(char colorCode) {
         last = "§" + colorCode + last;
+        addLast();
+        return this;
+    }
+
+    public StringFactory setColor(ChatColor color) {
+        last = "§" + color.getChar() + last;
         addLast();
         return this;
     }

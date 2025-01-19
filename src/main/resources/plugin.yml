@@ -10,7 +10,9 @@ permissions:
   shop-browsing:
     description: Allows the player to browse other players' shops
   item-selling:
-    description: Allows the player to sell his items to the Global Server Shop.
+    description: Allows the player to sell his items to the Global Server Shop
+  access-global-shop:
+    description: Allows the player to buy and sell items from the Global Server Shop
 commands:
   give-permission:
     aliases: [givepermission, giveperm, givep, give-perm, give-p]
@@ -35,8 +37,12 @@ commands:
   sell-item:
     aliases: [sellitem, sellone, sell-one]
     usage: /<command>
-    description: Sells one item of the currently held item stack to the server global shop
+    description: Sells one item of the currently held item stack to the server shop
   sell-all:
     aliases: [sellhand, sellall, sellh, sell-hand, sell-all, sell-h]
     usage: /<command>
-    description: Sells the entire currently held item stack to the server global shop
+    description: Sells the entire currently held item stack to the server shop
+  open-shop:
+    aliases: [openshop, shop, sh, market]
+    usage: /<command>
+    description: Access to the server shop

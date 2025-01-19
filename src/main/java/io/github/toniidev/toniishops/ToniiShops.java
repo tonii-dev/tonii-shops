@@ -24,6 +24,7 @@ public final class ToniiShops extends JavaPlugin {
         new InitializeUtils(new CreateShop(), "create-shop").initialize();
         new InitializeUtils(new SellItem(), "sell-item").initialize();
         new InitializeUtils(new SellAll(), "sell-all").initialize();
+        new InitializeUtils(new Shop(this), "open-shop").initialize();
 
         Bukkit.getPluginManager().registerEvents(new BlockListener(this), this);
         Bukkit.getPluginManager().registerEvents(new InventoryFactory(), this);

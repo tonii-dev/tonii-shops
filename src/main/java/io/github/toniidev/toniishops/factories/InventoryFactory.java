@@ -117,6 +117,30 @@ public class InventoryFactory implements Listener {
     }
 
     /**
+     * Adds the given ItemStack(s) to the Inventory that this InventoryFactory instance is managing
+     *
+     * @param itemStacks The ItemStack(s) to add to the Inventory
+     * @return This InventoryFactoryInstance
+     */
+    public InventoryFactory addItem(ItemStack... itemStacks) {
+        this.inventory.addItem(itemStacks);
+        return this;
+    }
+
+    /**
+     * Adds the given ItemStack(s) to the Inventory that this InventoryFactory instance is managing
+     *
+     * @param itemStacks The list of ItemStack(s) to add to the Inventory
+     * @return This InventoryFactoryInstance
+     */
+    public InventoryFactory addItem(List<ItemStack> itemStacks) {
+        for(ItemStack itemStack : itemStacks){
+            this.inventory.addItem(itemStack);
+        }
+        return this;
+    }
+
+    /**
      * Sets whether the specified slot of the Inventory that this InventoryFactory instance is editing can be clicked or not.
      * To edit clicks permission status on ALL slots, it must be used %instance%#setClicksAllowed(boolean value)
      *
