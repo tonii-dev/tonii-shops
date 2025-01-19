@@ -37,8 +37,9 @@ public class InventoryFactory implements Listener {
     /// It cannot be final since the blank constructor does not set this
     private Plugin main;
 
-    private final Map<Integer, Inventory> redirects = new HashMap<>();
-    private final Map<Integer, InventoryInterface> actions = new HashMap<>();
+    private Map<Integer, Inventory> redirects = new HashMap<>();
+    private Map<Integer, InventoryInterface> actions = new HashMap<>();
+
     private final List<Integer> slotsThatDoNotAcceptClicks = new ArrayList<>();
 
     private boolean isClosingAllowed = true;
@@ -134,7 +135,7 @@ public class InventoryFactory implements Listener {
      * @return This InventoryFactoryInstance
      */
     public InventoryFactory addItem(List<ItemStack> itemStacks) {
-        for(ItemStack itemStack : itemStacks){
+        for (ItemStack itemStack : itemStacks) {
             this.inventory.addItem(itemStack);
         }
         return this;
@@ -226,6 +227,18 @@ public class InventoryFactory implements Listener {
     }
 
     /**
+     * Sets the Inventory that has to be opened when a certain slots gets clicked
+     *
+     * @param slot      The slot to click to open the specified Inventory
+     * @param inventory THe Inventory to open when the specified slot gets clicked
+     * @return This InventoryFactory instance
+     */
+    public InventoryFactory setRedirect(int slot, Inventory inventory) {
+        this.redirects.put(slot, inventory);
+        return this;
+    }
+
+    /**
      * Says whether clicks are enabled on a specified slot or not
      *
      * @param slot The slot on which we must understand whether clicks are enabled or not
@@ -277,6 +290,28 @@ public class InventoryFactory implements Listener {
     public Map<Integer, InventoryInterface> getActions() {
         if (this.actions.isEmpty()) return null;
         return this.actions;
+    }
+
+    /**
+     * Default setter for this class
+     *
+     * @param redirects New value for Redirects map
+     * @return this InventoryFactory instance
+     */
+    public InventoryFactory setRedirects(Map<Integer, Inventory> redirects) {
+        this.redirects = redirects;
+        return this;
+    }
+
+    /**
+     * Default setter for this class
+     *
+     * @param actions New value for Actions map
+     * @return this InventoryFactory instance
+     */
+    public InventoryFactory setActions(Map<Integer, InventoryInterface> actions) {
+        this.actions = actions;
+        return this;
     }
 
     /**
@@ -347,7 +382,15 @@ public class InventoryFactory implements Listener {
 
         if (factory.getRedirects() == null) return;
         if (!factory.getRedirects().containsKey(e.getRawSlot())) return;
-        e.getWhoClicked().openInventory(factory.getRedirects().get(e.getRawSlot()));
+
+        if(factory.getInventoryToShowOnClose() == null)
+            e.getWhoClicked().openInventory(factory.getRedirects().get(e.getRawSlot()));
+        else{
+            Inventory inventoryToShowOnClose = factory.getInventoryToShowOnClose();
+            factory.setInventoryToShowOnClose(null);
+            e.getWhoClicked().openInventory(factory.getRedirects().get(e.getRawSlot()));
+            factory.setInventoryToShowOnClose(inventoryToShowOnClose);
+        }
     }
 
     /**

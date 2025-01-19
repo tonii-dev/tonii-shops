@@ -5,16 +5,13 @@ import io.github.toniidev.toniishops.factories.InventoryFactory;
 import io.github.toniidev.toniishops.factories.ItemStackFactory;
 import io.github.toniidev.toniishops.factories.MultipleInventoryFactory;
 import io.github.toniidev.toniishops.factories.StringFactory;
-import io.github.toniidev.toniishops.interfaces.InventoryInterface;
 import io.github.toniidev.toniishops.utils.IntegerUtils;
 import io.github.toniidev.toniishops.utils.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
-import org.checkerframework.checker.units.qual.A;
 
 import javax.annotation.Nullable;
 import java.util.AbstractMap;
@@ -41,7 +38,6 @@ public class GlobalShop {
             "lapis", 60.0,
             "diamond", 500.0,
             "emerald", 1000.0,
-            "quartz", 60.0,
             "netherite", 1500.0
     );
 
@@ -78,9 +74,6 @@ public class GlobalShop {
             Map.entry("log", 200.0),
             Map.entry("wood", 200.0),
             Map.entry("planks", 50.0),
-            Map.entry("fence", 250.0),
-            Map.entry("trapdoor", 300.0),
-            Map.entry("door", 300.0),
             Map.entry("glowstone", 200.0),
             Map.entry("lantern", 180.0),
             Map.entry("sandstone", 40.0),
@@ -123,13 +116,12 @@ public class GlobalShop {
             Map.entry("slimeball", 50.0),
             Map.entry("gunpowder", 20.0),
             Map.entry("pearl", 100.0),
-            Map.entry("wart", 30.0),
-            Map.entry("wheat", 15.0)
+            Map.entry("wart", 30.0)
     );
 
     public static final List<String> PROHIBITED_WORDS = List.of(
             "chestplate",
-            "leggins",
+            "leggings",
             "helmet",
             "boots",
             "raw",
@@ -137,13 +129,66 @@ public class GlobalShop {
             "pickaxe",
             "hoe",
             "axe",
+            "shovel",
             "trident",
             "horse",
             "bow",
             "totem",
             "block",
             "bottle",
-            "on_a_stick"
+            "on_a_stick",
+            "redstone_wire",
+            "redstone_wall_torch",
+            "scrap",
+            "nugget",
+            "redstone_torch",
+            "spawn_egg",
+            "iron_bars",
+            "ore",
+            "lamp",
+            "powder_snow",
+            "powder",
+            "seeds",
+            "debug_stick",
+            "written_book",
+            "knowledge_book",
+            "smithing",
+            "melon_stem",
+            "candle_cake",
+            "salmon_bucket",
+            "pufferfish",
+            "poisonous",
+            "enchanted_book",
+            "potted",
+            "wall",
+            "skull",
+            "pattern",
+            "door",
+            "trapdoor",
+            "orange_banner",
+            "magenta_banner",
+            "light_blue_banner",
+            "yellow_banner",
+            "lime_banner",
+            "pink_banner",
+            "gray_banner",
+            "light_gray_banner",
+            "cyan_banner",
+            "purple_banner",
+            "blue_banner",
+            "brown_banner",
+            "green_banner",
+            "red_banner",
+            "black_banner"
+    );
+
+    public static final List<Material> PROHIBITED_MATERIALS = List.of(
+            Material.WATER,
+            Material.LAVA,
+            Material.LAVA_CAULDRON,
+            Material.WATER_CAULDRON,
+            Material.NETHER_QUARTZ_ORE,
+            Material.QUARTZ
     );
 
     /**
@@ -209,7 +254,8 @@ public class GlobalShop {
     public static boolean canSell(Material material) {
         boolean allowedWord = true;
         for (String word : PROHIBITED_WORDS) {
-            if (StringUtils.doesMaterialNameContainString(material.name(), word)) allowedWord = false;
+            if (StringUtils.doesMaterialNameContainString(material.name(), word) ||
+                    PROHIBITED_MATERIALS.contains(material)) allowedWord = false;
         }
 
         return getDefaultPrice(material) != 0.0 && allowedWord;
@@ -252,16 +298,16 @@ public class GlobalShop {
         return null;
     }
 
-    public static Inventory getBlocksShop(Plugin plugin){
+    public static Inventory getBlockShop(Plugin main) {
         List<ItemStack> blocks = new ArrayList<>();
-        InventoryFactory factory = new InventoryFactory(6, " ", plugin)
+        InventoryFactory factory = new InventoryFactory(6, " ", main)
                 .setClicksAllowed(false)
-                .setInventoryToShowOnClose(GlobalShop.getHome(plugin));
+                .setInventoryToShowOnClose(GlobalShop.getHome(main));
 
         for (GlobalShopItem item : GlobalShop.shop) {
-            if(item.getShopItemType().equals(ShopItemType.BLOCK)){
+            if (item.getShopItemType().equals(ShopItemType.BLOCK)) {
                 blocks.add(new ItemStackFactory(item.getMaterial())
-                                .addLoreLine(StringUtils.formatColorCodes('&', "&8Block"))
+                        .addLoreLine(StringUtils.formatColorCodes('&', "&8Block"))
                         .addBlankLoreLine()
                         .addLoreLine(new StringFactory()
                                 .append("Buy price:").setColor('7')
@@ -277,7 +323,125 @@ public class GlobalShop {
             }
         }
 
-        return new MultipleInventoryFactory(blocks, "Blocks", plugin, factory)
+        return new MultipleInventoryFactory(blocks, "Block shop", main, factory)
+                .get();
+    }
+
+    public static Inventory getOreShop(Plugin main) {
+        List<ItemStack> ores = new ArrayList<>();
+        InventoryFactory factory = new InventoryFactory(6, " ", main)
+                .setClicksAllowed(false)
+                .setInventoryToShowOnClose(GlobalShop.getHome(main));
+
+        for (GlobalShopItem item : GlobalShop.shop) {
+            if (item.getShopItemType().equals(ShopItemType.ORE)) {
+                ores.add(new ItemStackFactory(item.getMaterial())
+                        .addLoreLine(StringUtils.formatColorCodes('&', "&8Ore"))
+                        .addBlankLoreLine()
+                        .addLoreLine(new StringFactory()
+                                .append("Buy price:").setColor('7')
+                                .append(item.getBuyPrice() + "$").setColor('6')
+                                .get())
+                        .addLoreLine(new StringFactory()
+                                .append("Sell price:").setColor('7')
+                                .append(item.getSellPrice() + "$").setColor('6')
+                                .get())
+                        .addBlankLoreLine()
+                        .addLoreLine(StringUtils.formatColorCodes('&', "&eClick to view details!"))
+                        .get());
+            }
+        }
+
+        return new MultipleInventoryFactory(ores, "Ore shop", main, factory)
+                .get();
+    }
+
+    public static Inventory getItemShop(Plugin main) {
+        List<ItemStack> ores = new ArrayList<>();
+        InventoryFactory factory = new InventoryFactory(6, " ", main)
+                .setClicksAllowed(false)
+                .setInventoryToShowOnClose(GlobalShop.getHome(main));
+
+        for (GlobalShopItem item : GlobalShop.shop) {
+            if (item.getShopItemType().equals(ShopItemType.ITEM)) {
+                if (item.getMaterial() != null) {
+                    ores.add(new ItemStackFactory(item.getMaterial())
+                            .addLoreLine(StringUtils.formatColorCodes('&', "&8Item"))
+                            .addBlankLoreLine()
+                            .addLoreLine(new StringFactory()
+                                    .append("Buy price:").setColor('7')
+                                    .append(item.getBuyPrice() + "$").setColor('6')
+                                    .get())
+                            .addLoreLine(new StringFactory()
+                                    .append("Sell price:").setColor('7')
+                                    .append(item.getSellPrice() + "$").setColor('6')
+                                    .get())
+                            .addBlankLoreLine()
+                            .addLoreLine(StringUtils.formatColorCodes('&', "&eClick to view details!"))
+                            .get());
+                }
+            }
+        }
+
+        return new MultipleInventoryFactory(ores, "Item shop", main, factory)
+                .get();
+    }
+
+    public static Inventory getFoodShop(Plugin main) {
+        List<ItemStack> foods = new ArrayList<>();
+        InventoryFactory factory = new InventoryFactory(6, " ", main)
+                .setClicksAllowed(false)
+                .setInventoryToShowOnClose(GlobalShop.getHome(main));
+
+        for (GlobalShopItem item : GlobalShop.shop) {
+            if (item.getShopItemType().equals(ShopItemType.FOOD)) {
+                foods.add(new ItemStackFactory(item.getMaterial())
+                        .addLoreLine(StringUtils.formatColorCodes('&', "&8Food"))
+                        .addBlankLoreLine()
+                        .addLoreLine(new StringFactory()
+                                .append("Buy price:").setColor('7')
+                                .append(item.getBuyPrice() + "$").setColor('6')
+                                .get())
+                        .addLoreLine(new StringFactory()
+                                .append("Sell price:").setColor('7')
+                                .append(item.getSellPrice() + "$").setColor('6')
+                                .get())
+                        .addBlankLoreLine()
+                        .addLoreLine(StringUtils.formatColorCodes('&', "&eClick to view details!"))
+                        .get());
+            }
+        }
+
+        return new MultipleInventoryFactory(foods, "Food shop", main, factory)
+                .get();
+    }
+
+    public static Inventory getDecorationShop(Plugin main) {
+        List<ItemStack> foods = new ArrayList<>();
+        InventoryFactory factory = new InventoryFactory(6, " ", main)
+                .setClicksAllowed(false)
+                .setInventoryToShowOnClose(GlobalShop.getHome(main));
+
+        for (GlobalShopItem item : GlobalShop.shop) {
+            if (item.getShopItemType().equals(ShopItemType.DECORATIVE)) {
+                foods.add(new ItemStackFactory(item.getMaterial())
+                        .addLoreLine(StringUtils.formatColorCodes('&', "&8Decoration"))
+                        .addBlankLoreLine()
+                        .addLoreLine(new StringFactory()
+                                .append("Buy price:").setColor('7')
+                                .append(item.getBuyPrice() + "$").setColor('6')
+                                .get())
+                        .addLoreLine(new StringFactory()
+                                .append("Sell price:").setColor('7')
+                                .append(item.getSellPrice() + "$").setColor('6')
+                                .get())
+                        .addBlankLoreLine()
+                        .addLoreLine(StringUtils.formatColorCodes('&', "&eClick to view details!"))
+                        .get());
+            }
+        }
+
+        return new MultipleInventoryFactory(foods, "Decoration shop", main, factory)
                 .get();
     }
 
@@ -306,12 +470,15 @@ public class GlobalShop {
                                 .get())
                         .get())
 
-                .setAction(11, e -> e.getWhoClicked().openInventory(getBlocksShop(plugin)))
+                .setAction(11, e -> e.getWhoClicked().openInventory(getBlockShop(plugin)))
+                .setAction(12, e -> e.getWhoClicked().openInventory(getOreShop(plugin)))
+                .setAction(13, e -> e.getWhoClicked().openInventory(getItemShop(plugin)))
+                .setAction(14, e -> e.getWhoClicked().openInventory(getFoodShop(plugin)))
+                .setAction(15, e -> e.getWhoClicked().openInventory(getDecorationShop(plugin)))
 
                 .setClicksAllowed(false)
-                .fill(new ItemStackFactory(Material.WHITE_STAINED_GLASS_PANE)
-                        .setName(" ")
-                        .get())
+                .fill(new ItemStackFactory(Material.GRAY_STAINED_GLASS_PANE)
+                        .setName(" ").get())
                 .get();
     }
 

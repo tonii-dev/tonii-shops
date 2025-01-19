@@ -30,7 +30,7 @@ public final class ToniiShops extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new InventoryFactory(), this);
         Bukkit.getPluginManager().registerEvents(new PlayerListener(), this);
 
-        GlobalShop.initializeShop(200);
+        GlobalShop.initializeShop(1);
     }
 
     @Override

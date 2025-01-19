@@ -40,6 +40,6 @@ public class Shop implements CommandExecutor {
 
         player.openInventory(GlobalShop.getHome(main));
 
-        return false;
+        return true;
     }
 }
