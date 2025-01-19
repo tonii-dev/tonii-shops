@@ -18,6 +18,9 @@ public class GlobalShopItem {
     private final double basePrice;
     private final ShopItemType shopItemType;
 
+    public HashMap<Player, Double> sells = new HashMap<>();
+    public HashMap<Player, Double> buys = new HashMap<>();
+
     /**
      * Creates a new GlobalShopItem instance
      *

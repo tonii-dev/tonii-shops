@@ -37,6 +37,7 @@ public class InventoryFactory implements Listener {
     /// It cannot be final since the blank constructor does not set this
     private Plugin main;
 
+    private String title = " ";
     private Map<Integer, Inventory> redirects = new HashMap<>();
     private Map<Integer, InventoryInterface> actions = new HashMap<>();
 
@@ -75,6 +76,7 @@ public class InventoryFactory implements Listener {
     public InventoryFactory(int rows, String title, Plugin plugin) {
         this.inventory = Bukkit.createInventory(null, rows * 9, title);
         this.main = plugin;
+        this.title = title;
 
         InventoryFactory.factories.add(this);
     }
@@ -163,6 +165,15 @@ public class InventoryFactory implements Listener {
         }
 
         return this;
+    }
+
+    /**
+     * Default getter for this class
+     *
+     * @return The title of the Inventory that this InventoryFactory instance is currently editing
+     */
+    public String getTitle() {
+        return title;
     }
 
     /**
@@ -383,9 +394,9 @@ public class InventoryFactory implements Listener {
         if (factory.getRedirects() == null) return;
         if (!factory.getRedirects().containsKey(e.getRawSlot())) return;
 
-        if(factory.getInventoryToShowOnClose() == null)
+        if (factory.getInventoryToShowOnClose() == null)
             e.getWhoClicked().openInventory(factory.getRedirects().get(e.getRawSlot()));
-        else{
+        else {
             Inventory inventoryToShowOnClose = factory.getInventoryToShowOnClose();
             factory.setInventoryToShowOnClose(null);
             e.getWhoClicked().openInventory(factory.getRedirects().get(e.getRawSlot()));

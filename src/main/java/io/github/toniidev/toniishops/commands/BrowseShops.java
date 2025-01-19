@@ -74,7 +74,7 @@ public class BrowseShops implements CommandExecutor {
                 .get();
 
         InventoryFactory shopManagementFactory = new InventoryFactory(IntegerUtils.findInventoryRowsToCreate(shopsToConsider.size()), "Browse shops", main)
-                .fill(new ItemStackFactory(Material.GRAY_STAINED_GLASS_PANE)
+                .fill(new ItemStackFactory(Material.BLACK_STAINED_GLASS_PANE)
                         .setName(" ")
                         .get())
                 .setClicksAllowed(false);

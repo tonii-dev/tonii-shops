@@ -3,7 +3,6 @@ package io.github.toniidev.toniishops.commands;
 import io.github.toniidev.toniishops.classes.GlobalShop;
 import io.github.toniidev.toniishops.strings.CommandError;
 import io.github.toniidev.toniishops.strings.ConsoleString;
-import io.github.toniidev.toniishops.strings.GlobalShopError;
 import io.github.toniidev.toniishops.utils.CommandUtils;
 import io.github.toniidev.toniishops.utils.StringUtils;
 import org.bukkit.Bukkit;
@@ -28,7 +27,7 @@ public class Shop implements CommandExecutor {
             return true;
         }
 
-        Permission permission = Bukkit.getPluginManager().getPermission("access-global-shop");
+        Permission permission = Bukkit.getPluginManager().getPermission("global-shop-access");
         assert permission != null;
         if (!commandSender.hasPermission(permission)) {
             commandSender.sendMessage(CommandError.MISSING_PERMISSIONS.getMessage() +
@@ -38,7 +37,7 @@ public class Shop implements CommandExecutor {
 
         if(CommandUtils.checkBaseArgs(strings, player, command)) return true;
 
-        player.openInventory(GlobalShop.getHome(main));
+        player.openInventory(GlobalShop.getHomeGUI(main));
 
         return true;
     }

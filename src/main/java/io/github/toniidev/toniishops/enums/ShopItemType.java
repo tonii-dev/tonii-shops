@@ -6,11 +6,11 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 public enum ShopItemType {
-    BLOCK(new ItemStackFactory(Material.BRICKS)
+    BLOCK(new ItemStackFactory(Material.GRASS_BLOCK)
             .setName(StringUtils.formatColorCodes('&', "&e&lBuilding blocks"))
             .addLoreLine("Most common building blocks")
             .get()),
-    ITEM(new ItemStackFactory(Material.BONE)
+    ITEM(new ItemStackFactory(Material.FEATHER)
             .setName(StringUtils.formatColorCodes('&', "&b&lItems"))
             .addLoreLine("Most common items")
             .get()),
@@ -18,11 +18,11 @@ public enum ShopItemType {
             .setName(StringUtils.formatColorCodes('&', "&9&lOres"))
             .addLoreLine("All the main ores")
             .get()),
-    FOOD(new ItemStackFactory(Material.COOKED_RABBIT)
+    FOOD(new ItemStackFactory(Material.COOKED_MUTTON)
             .setName(StringUtils.formatColorCodes('&', "&e&lFood"))
             .addLoreLine("All the foods")
             .get()),
-    DECORATIVE(new ItemStackFactory(Material.FLOWER_POT)
+    DECORATIVE(new ItemStackFactory(Material.TORCHFLOWER)
             .setName(StringUtils.formatColorCodes('&', "&6&lDecoration"))
             .addLoreLine("Main decorational blocks")
             .get());

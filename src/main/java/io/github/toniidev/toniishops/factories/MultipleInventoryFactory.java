@@ -16,23 +16,26 @@ public class MultipleInventoryFactory {
     private final Plugin main;
     private final List<Inventory> pages;
 
-    public MultipleInventoryFactory(List<ItemStack> items, String title, Plugin plugin, InventoryFactory startFactory) {
+    private final int[] airSlots = {2, 3, 4, 5, 6, 7, 11, 12, 13, 14, 15, 16, 20, 21, 22, 23, 24, 25, 29,
+            30, 31, 32, 33, 34, 38, 39, 40, 41, 42, 43, 47, 48, 49, 50, 51, 52};
+
+    public MultipleInventoryFactory(List<ItemStack> items, Plugin plugin, InventoryFactory startFactory) {
         this.main = plugin;
         this.pages = new ArrayList<>();
 
-        int totalPages = (int) Math.ceil((double) items.size() / 21);
+        int totalPages = (int) Math.ceil((double) items.size() / airSlots.length);
 
         // Create pages
         for (int pageNumber = 0; pageNumber < totalPages; pageNumber++) {
-            int startIndex = pageNumber * 21;
-            int endIndex = Math.min(startIndex + 21, items.size());
+            int startIndex = pageNumber * airSlots.length;
+            int endIndex = Math.min(startIndex + airSlots.length, items.size());
             List<ItemStack> currentItems = items.subList(startIndex, endIndex);
 
             // Create page inventory with items
             InventoryFactory pageInventory = createPageTemplate(startFactory)
                     .addItem(currentItems);
 
-            pages.add(finalizePage(pageNumber, title, totalPages, pageInventory));
+            pages.add(finalizePage(pageNumber, totalPages, pageInventory));
         }
     }
 
@@ -50,8 +53,8 @@ public class MultipleInventoryFactory {
 
         Inventory inventoryToShowOnClose = startFactory.getInventoryToShowOnClose();
 
-        InventoryFactory factory = new InventoryFactory(6, " ", main)
-                .fill(new ItemStackFactory(Material.GRAY_STAINED_GLASS_PANE).setName(" ").get())
+        InventoryFactory factory = new InventoryFactory(6, startFactory.getTitle(), startFactory.getMainPluginInstance())
+                .fill(new ItemStackFactory(Material.BLACK_STAINED_GLASS_PANE).setName(" ").get())
                 .setInventoryToShowOnClose(inventoryToShowOnClose)
                 .setClicksAllowed(clicksAllowed)
                 .setActions(actions)  // Ensure actions is mutable here
@@ -63,15 +66,12 @@ public class MultipleInventoryFactory {
     }
 
     private void setAirItems(InventoryFactory factory) {
-        int[] airSlots = {10, 11, 12, 13, 14, 15, 16, 19, 20, 21, 22, 23, 24, 25, 28, 29, 30, 31, 32, 33, 34};
         for (int slot : airSlots) {
             factory.setItem(slot, new ItemStack(Material.AIR));
         }
     }
 
-    private Inventory finalizePage(int pageNumber, String title, int totalPages, InventoryFactory template) {
-        template.setTitle(title);
-
+    private Inventory finalizePage(int pageNumber, int totalPages, InventoryFactory template) {
         // Set page navigation items
         setPageNavigationItems(pageNumber, totalPages, template);
 
@@ -79,24 +79,26 @@ public class MultipleInventoryFactory {
     }
 
     private void setPageNavigationItems(int pageNumber, int totalPages, InventoryFactory template) {
-        template.setItem(49, new ItemStackFactory(Material.COMPASS)
+        template.setItem(9, new ItemStackFactory(Material.COMPASS)
                 .setName(StringUtils.formatColorCodes('&', "&eInventory page"))
                 .addLoreLine(new StringFactory()
                         .append("Current page:").setColor('7')
                         .append(String.valueOf(pageNumber + 1)).setColor('f')
+                        .append("of").setColor('7')
+                        .append(String.valueOf(totalPages)).setColor('f')
                         .get())
                 .get());
 
         if (pageNumber > 0) {
-            template.setAction(46, e -> openPage(pageNumber - 1, template, e.getWhoClicked()));
-            template.setItem(46, createNavigationItem(Material.RED_STAINED_GLASS_PANE,
+            template.setAction(27, e -> openPage(pageNumber - 1, template, e.getWhoClicked()));
+            template.setItem(27, createNavigationItem(Material.ARROW,
                     StringUtils.formatColorCodes('&', "&cPrevious page"),
                     StringUtils.formatColorCodes('&', String.format("Navigate back to page &e%d", pageNumber))));
         }
 
         if (pageNumber < totalPages - 1) {
-            template.setAction(52, e -> openPage(pageNumber + 1, template, e.getWhoClicked()));
-            template.setItem(52, createNavigationItem(Material.GREEN_STAINED_GLASS_PANE,
+            template.setAction(36, e -> openPage(pageNumber + 1, template, e.getWhoClicked()));
+            template.setItem(36, createNavigationItem(Material.SPECTRAL_ARROW,
                     StringUtils.formatColorCodes('&', "&aNext page"),
                     StringUtils.formatColorCodes('&', String.format("Navigate to page &e%d", pageNumber + 2))));
         }

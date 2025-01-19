@@ -11,8 +11,10 @@ permissions:
     description: Allows the player to browse other players' shops
   item-selling:
     description: Allows the player to sell his items to the Global Server Shop
-  access-global-shop:
+  global-shop-access:
     description: Allows the player to buy and sell items from the Global Server Shop
+  purse-management:
+    description: Allows the player to manage his purse to take money from it
 commands:
   give-permission:
     aliases: [givepermission, giveperm, givep, give-perm, give-p]
@@ -46,3 +48,7 @@ commands:
     aliases: [openshop, shop, sh, market]
     usage: /<command>
     description: Access to the server shop
+  open-purse:
+    aliases: [purse, view-purse, openpurse, viewpurse, purse]
+    usage: /<command>
+    descriptions: Shows the player a GUI containing all his money

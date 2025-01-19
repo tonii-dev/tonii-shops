@@ -66,6 +66,7 @@ public class GlobalShop {
             Map.entry("stairs", 250.0),
             Map.entry("smooth", 200.0),
             Map.entry("stone", 50.0),
+            Map.entry("cobblestone", 30.0),
             Map.entry("dirt", 10.0),
             Map.entry("grass", 15.0),
             Map.entry("terracotta", 300.0),
@@ -82,7 +83,6 @@ public class GlobalShop {
 
     public static final Map<String, Double> FOOD_PRICES = Map.ofEntries(
             Map.entry("bread", 20.0),
-            Map.entry("enchanted", 500.0),
             Map.entry("golden", 100.0),
             Map.entry("apple", 10.0),
             Map.entry("cooked", 35.0),
@@ -179,7 +179,8 @@ public class GlobalShop {
             "brown_banner",
             "green_banner",
             "red_banner",
-            "black_banner"
+            "black_banner",
+            "golden_apple"
     );
 
     public static final List<Material> PROHIBITED_MATERIALS = List.of(
@@ -298,11 +299,74 @@ public class GlobalShop {
         return null;
     }
 
-    public static Inventory getBlockShop(Plugin main) {
+    public static Inventory getSpecificItemView(GlobalShopItem item, Plugin plugin){
+        return new InventoryFactory(3, "Details", plugin)
+                .setItem(10, new ItemStackFactory(Material.GOLDEN_HORSE_ARMOR)
+                        .setName(StringUtils.formatColorCodes('&', "&aBuy instantly"))
+                        .addLoreLine("This item will be sent to your inventory")
+                        .addLoreLine("if you pay for it")
+                        .addBlankLoreLine()
+                        .addLoreLine(StringUtils.formatColorCodes('&', "Price per unit: &6" + item.getBuyPrice() + "$"))
+                        .addBlankLoreLine()
+                        .addLoreLine(StringUtils.formatColorCodes('&', "&eClick to buy!"))
+                        .get())
+                .setItem(11, new ItemStackFactory(Material.HOPPER)
+                        .setName(StringUtils.formatColorCodes('&', "&6Sell instantly"))
+                        .addLoreLine(StringUtils.formatColorCodes('&', "&8/sellone, /sellall"))
+                        .addBlankLoreLine()
+                        .addLoreLine(StringUtils.formatColorCodes('&', "Price per unit: &6" + item.getSellPrice() + "$"))
+                        .addBlankLoreLine()
+                        .addLoreLine(StringUtils.formatColorCodes('&', "&eClick to sell!"))
+                        .get())
+
+                .setItem(13, new ItemStackFactory(item.getMaterial())
+                        .addLoreLine(getSubtitle(item.getShopItemType()))
+                        .get())
+
+                .setItem(15, new ItemStackFactory(Material.FILLED_MAP)
+                        .setName(StringUtils.formatColorCodes('&', "&aBuy orders"))
+                        .get())
+
+                .get();
+
+        // TODO: finish this
+    }
+
+    public static Inventory getGUI(ShopItemType type, Plugin plugin){
+        Inventory value;
+
+        switch (type){
+            case ITEM -> value = getItemShopGUI(plugin);
+            case FOOD -> value = getFoodShopGUI(plugin);
+            case DECORATIVE -> value = getDecorationShopGUI(plugin);
+            case BLOCK -> value = getBlockShopGUI(plugin);
+            case ORE -> value = getOreShopGUI(plugin);
+            case null, default -> value = Bukkit.createInventory(null, 9, " ");
+        }
+
+        return value;
+    }
+
+    public static String getSubtitle(ShopItemType type){
+        String value;
+
+        switch (type){
+            case ITEM -> value = StringUtils.formatColorCodes('&', "&8Item");
+            case FOOD -> value = StringUtils.formatColorCodes('&', "&8Food");
+            case DECORATIVE -> value = StringUtils.formatColorCodes('&', "&8Decoration");
+            case BLOCK -> value = StringUtils.formatColorCodes('&', "&8Block");
+            case ORE -> value = StringUtils.formatColorCodes('&', "&8Ore");
+            case null, default -> value = StringUtils.formatColorCodes('&', "&8null");
+        }
+
+        return value;
+    }
+
+    public static Inventory getBlockShopGUI(Plugin main) {
         List<ItemStack> blocks = new ArrayList<>();
-        InventoryFactory factory = new InventoryFactory(6, " ", main)
+        InventoryFactory factory = new InventoryFactory(6, "Block shop", main)
                 .setClicksAllowed(false)
-                .setInventoryToShowOnClose(GlobalShop.getHome(main));
+                .setInventoryToShowOnClose(GlobalShop.getHomeGUI(main));
 
         for (GlobalShopItem item : GlobalShop.shop) {
             if (item.getShopItemType().equals(ShopItemType.BLOCK)) {
@@ -323,15 +387,15 @@ public class GlobalShop {
             }
         }
 
-        return new MultipleInventoryFactory(blocks, "Block shop", main, factory)
+        return new MultipleInventoryFactory(blocks, main, factory)
                 .get();
     }
 
-    public static Inventory getOreShop(Plugin main) {
+    public static Inventory getOreShopGUI(Plugin main) {
         List<ItemStack> ores = new ArrayList<>();
-        InventoryFactory factory = new InventoryFactory(6, " ", main)
+        InventoryFactory factory = new InventoryFactory(6, "Ore shop", main)
                 .setClicksAllowed(false)
-                .setInventoryToShowOnClose(GlobalShop.getHome(main));
+                .setInventoryToShowOnClose(GlobalShop.getHomeGUI(main));
 
         for (GlobalShopItem item : GlobalShop.shop) {
             if (item.getShopItemType().equals(ShopItemType.ORE)) {
@@ -352,15 +416,15 @@ public class GlobalShop {
             }
         }
 
-        return new MultipleInventoryFactory(ores, "Ore shop", main, factory)
+        return new MultipleInventoryFactory(ores, main, factory)
                 .get();
     }
 
-    public static Inventory getItemShop(Plugin main) {
+    public static Inventory getItemShopGUI(Plugin main) {
         List<ItemStack> ores = new ArrayList<>();
-        InventoryFactory factory = new InventoryFactory(6, " ", main)
+        InventoryFactory factory = new InventoryFactory(6, "Item shop", main)
                 .setClicksAllowed(false)
-                .setInventoryToShowOnClose(GlobalShop.getHome(main));
+                .setInventoryToShowOnClose(GlobalShop.getHomeGUI(main));
 
         for (GlobalShopItem item : GlobalShop.shop) {
             if (item.getShopItemType().equals(ShopItemType.ITEM)) {
@@ -383,15 +447,15 @@ public class GlobalShop {
             }
         }
 
-        return new MultipleInventoryFactory(ores, "Item shop", main, factory)
+        return new MultipleInventoryFactory(ores, main, factory)
                 .get();
     }
 
-    public static Inventory getFoodShop(Plugin main) {
+    public static Inventory getFoodShopGUI(Plugin main) {
         List<ItemStack> foods = new ArrayList<>();
-        InventoryFactory factory = new InventoryFactory(6, " ", main)
+        InventoryFactory factory = new InventoryFactory(6, "Food shop", main)
                 .setClicksAllowed(false)
-                .setInventoryToShowOnClose(GlobalShop.getHome(main));
+                .setInventoryToShowOnClose(GlobalShop.getHomeGUI(main));
 
         for (GlobalShopItem item : GlobalShop.shop) {
             if (item.getShopItemType().equals(ShopItemType.FOOD)) {
@@ -412,15 +476,15 @@ public class GlobalShop {
             }
         }
 
-        return new MultipleInventoryFactory(foods, "Food shop", main, factory)
+        return new MultipleInventoryFactory(foods, main, factory)
                 .get();
     }
 
-    public static Inventory getDecorationShop(Plugin main) {
+    public static Inventory getDecorationShopGUI(Plugin main) {
         List<ItemStack> foods = new ArrayList<>();
-        InventoryFactory factory = new InventoryFactory(6, " ", main)
+        InventoryFactory factory = new InventoryFactory(6, "Decoration shop", main)
                 .setClicksAllowed(false)
-                .setInventoryToShowOnClose(GlobalShop.getHome(main));
+                .setInventoryToShowOnClose(GlobalShop.getHomeGUI(main));
 
         for (GlobalShopItem item : GlobalShop.shop) {
             if (item.getShopItemType().equals(ShopItemType.DECORATIVE)) {
@@ -441,43 +505,26 @@ public class GlobalShop {
             }
         }
 
-        return new MultipleInventoryFactory(foods, "Decoration shop", main, factory)
+        return new MultipleInventoryFactory(foods, main, factory)
                 .get();
     }
 
-    public static Inventory getHome(Plugin plugin) {
-        return new InventoryFactory(5, "Global shop", plugin)
+    public static Inventory getHomeGUI(Plugin plugin) {
+        return new InventoryFactory(3, "Global shop", plugin)
                 .setItem(11, ShopItemType.BLOCK.getIcon())
                 .setItem(12, ShopItemType.ORE.getIcon())
                 .setItem(13, ShopItemType.ITEM.getIcon())
                 .setItem(14, ShopItemType.FOOD.getIcon())
                 .setItem(15, ShopItemType.DECORATIVE.getIcon())
-                .setItem(31, new ItemStackFactory(Material.PAPER)
-                        .setName(StringUtils.formatColorCodes('&', "&9&lInfo"))
-                        .addLoreLine("Real time informations about the Shop status")
-                        .addBlankLoreLine()
-                        .addLoreLine(new StringFactory()
-                                .append("Items currently being sold:").setColor('7')
-                                .append(String.valueOf(GlobalShop.getAmountOfItems())).setColor('f')
-                                .get())
-                        .addLoreLine(new StringFactory()
-                                .append("Medium item buy price:").setColor('7')
-                                .append(getMediumBuyPrice() + "$").setColor('f')
-                                .get())
-                        .addLoreLine(new StringFactory()
-                                .append("Medium item sell price:").setColor('7')
-                                .append(getMediumSellPrice() + "$").setColor('f')
-                                .get())
-                        .get())
 
-                .setAction(11, e -> e.getWhoClicked().openInventory(getBlockShop(plugin)))
-                .setAction(12, e -> e.getWhoClicked().openInventory(getOreShop(plugin)))
-                .setAction(13, e -> e.getWhoClicked().openInventory(getItemShop(plugin)))
-                .setAction(14, e -> e.getWhoClicked().openInventory(getFoodShop(plugin)))
-                .setAction(15, e -> e.getWhoClicked().openInventory(getDecorationShop(plugin)))
+                .setAction(11, e -> e.getWhoClicked().openInventory(getBlockShopGUI(plugin)))
+                .setAction(12, e -> e.getWhoClicked().openInventory(getOreShopGUI(plugin)))
+                .setAction(13, e -> e.getWhoClicked().openInventory(getItemShopGUI(plugin)))
+                .setAction(14, e -> e.getWhoClicked().openInventory(getFoodShopGUI(plugin)))
+                .setAction(15, e -> e.getWhoClicked().openInventory(getDecorationShopGUI(plugin)))
 
                 .setClicksAllowed(false)
-                .fill(new ItemStackFactory(Material.GRAY_STAINED_GLASS_PANE)
+                .fill(new ItemStackFactory(Material.BLACK_STAINED_GLASS_PANE)
                         .setName(" ").get())
                 .get();
     }

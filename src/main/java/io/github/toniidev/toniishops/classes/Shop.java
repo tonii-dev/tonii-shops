@@ -209,7 +209,7 @@ public class Shop {
             });
         }
 
-        factory.fill(new ItemStackFactory(Material.GRAY_STAINED_GLASS_PANE)
+        factory.fill(new ItemStackFactory(Material.BLACK_STAINED_GLASS_PANE)
                 .setName(" ")
                 .get());
 

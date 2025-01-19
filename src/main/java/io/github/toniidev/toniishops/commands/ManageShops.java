@@ -74,7 +74,7 @@ public class ManageShops implements CommandExecutor {
         }
 
         player.openInventory(shopManagementFactory
-                .fill(new ItemStackFactory(Material.GRAY_STAINED_GLASS_PANE)
+                .fill(new ItemStackFactory(Material.BLACK_STAINED_GLASS_PANE)
                         .setName(" ")
                         .get())
                 .setClicksAllowed(false)
