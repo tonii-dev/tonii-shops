@@ -5,19 +5,20 @@ import io.github.toniidev.toniishops.factories.InventoryFactory;
 import io.github.toniidev.toniishops.factories.ItemStackFactory;
 import io.github.toniidev.toniishops.factories.MultipleInventoryFactory;
 import io.github.toniidev.toniishops.factories.StringFactory;
+import io.github.toniidev.toniishops.interfaces.InventoryInterface;
 import io.github.toniidev.toniishops.utils.IntegerUtils;
+import io.github.toniidev.toniishops.utils.ItemUtils;
 import io.github.toniidev.toniishops.utils.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
 import javax.annotation.Nullable;
-import java.util.AbstractMap;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * WARNING: This class contains some strings that aren't stored in any separate enum!
@@ -299,48 +300,6 @@ public class GlobalShop {
         return null;
     }
 
-    public static Inventory getSpecificItemView(GlobalShopItem item, Plugin plugin){
-        return new InventoryFactory(3, "Details", plugin)
-                .setItem(10, new ItemStackFactory(Material.GOLDEN_HORSE_ARMOR)
-                        .setName(StringUtils.formatColorCodes('&', "&aBuy instantly"))
-                        .addLoreLine("This item will be sent to your inventory")
-                        .addLoreLine("if you pay for it")
-                        .addBlankLoreLine()
-                        .addLoreLine(StringUtils.formatColorCodes('&', "Price per unit: &6" + item.getBuyPrice() + "$"))
-                        .addBlankLoreLine()
-                        .addLoreLine(StringUtils.formatColorCodes('&', "&eClick to buy!"))
-                        .get())
-                .setItem(11, new ItemStackFactory(Material.HOPPER)
-                        .setName(StringUtils.formatColorCodes('&', "&6Sell instantly"))
-                        .addLoreLine(StringUtils.formatColorCodes('&', "&8/sellone, /sellall"))
-                        .addBlankLoreLine()
-                        .addLoreLine(StringUtils.formatColorCodes('&', "Price per unit: &6" + item.getSellPrice() + "$"))
-                        .addBlankLoreLine()
-                        .addLoreLine(StringUtils.formatColorCodes('&', "&eClick to sell!"))
-                        .get())
-
-                .setItem(13, new ItemStackFactory(item.getMaterial())
-                        .addLoreLine(getSubtitle(item.getShopItemType()))
-                        .get())
-
-                // TODO: Put this on top of everything & do the same with sell
-                ItemStackFactory buyFactory = new ItemStackFactory(Material.FILLED_MAP)
-                        .setName(StringUtils.formatColorCodes('&', "&aBuy orders"));
-
-                Map<Player, HashMap<Long, Double>> history = GlobalShopItem.getBuyHistory();
-                if(!history.isEmpty()){
-                        for(int i = history.length - 1; i < history.length - 6; i++){
-                                buyFactory.addLoreLine(StringUtils.formatColorCodes('&', "&f" + player.getDisplayName() + 
-                                " &7bought &f" history.get(i).getKey().getKey() + "x &7for &f" + history.get(i).getKey().getKey()));
-                        }
-                }
-                else buyFactory.addLoreLine(StringUtils.formatColorCodes('&', "&9No recent orders to show."))
-
-                .get();
-
-        // TODO: finish this
-    }
-
     public static Inventory getGUI(ShopItemType type, Plugin plugin){
         Inventory value;
 
@@ -356,24 +315,21 @@ public class GlobalShop {
         return value;
     }
 
-    public static String getSubtitle(ShopItemType type){
-        String value;
-
-        switch (type){
-            case ITEM -> value = StringUtils.formatColorCodes('&', "&8Item");
-            case FOOD -> value = StringUtils.formatColorCodes('&', "&8Food");
-            case DECORATIVE -> value = StringUtils.formatColorCodes('&', "&8Decoration");
-            case BLOCK -> value = StringUtils.formatColorCodes('&', "&8Block");
-            case ORE -> value = StringUtils.formatColorCodes('&', "&8Ore");
-            case null, default -> value = StringUtils.formatColorCodes('&', "&8null");
-        }
-
-        return value;
-    }
-
     public static Inventory getBlockShopGUI(Plugin main) {
         List<ItemStack> blocks = new ArrayList<>();
         InventoryFactory factory = new InventoryFactory(6, "Block shop", main)
+                .setGlobalAction(new InventoryInterface() {
+                    @Override
+                    public void run(InventoryClickEvent e) {
+                        if(e.getCurrentItem() == null) return;
+                        if(canSell(e.getCurrentItem().getType()) &&
+                                ItemUtils.doItemStacksHaveTheSameName(e.getCurrentItem(), new ItemStack(e.getCurrentItem().getType()))){
+                            GlobalShopItem item = GlobalShop.getItem(e.getCurrentItem().getType());
+                            assert item != null;
+                            e.getWhoClicked().openInventory(item.getSpecificItemView(main));
+                        }
+                    }
+                })
                 .setClicksAllowed(false)
                 .setInventoryToShowOnClose(GlobalShop.getHomeGUI(main));
 
@@ -403,6 +359,18 @@ public class GlobalShop {
     public static Inventory getOreShopGUI(Plugin main) {
         List<ItemStack> ores = new ArrayList<>();
         InventoryFactory factory = new InventoryFactory(6, "Ore shop", main)
+                .setGlobalAction(new InventoryInterface() {
+                    @Override
+                    public void run(InventoryClickEvent e) {
+                        if(e.getCurrentItem() == null) return;
+                        if(canSell(e.getCurrentItem().getType()) &&
+                                ItemUtils.doItemStacksHaveTheSameName(e.getCurrentItem(), new ItemStack(e.getCurrentItem().getType()))){
+                            GlobalShopItem item = GlobalShop.getItem(e.getCurrentItem().getType());
+                            assert item != null;
+                            e.getWhoClicked().openInventory(item.getSpecificItemView(main));
+                        }
+                    }
+                })
                 .setClicksAllowed(false)
                 .setInventoryToShowOnClose(GlobalShop.getHomeGUI(main));
 
@@ -432,6 +400,18 @@ public class GlobalShop {
     public static Inventory getItemShopGUI(Plugin main) {
         List<ItemStack> ores = new ArrayList<>();
         InventoryFactory factory = new InventoryFactory(6, "Item shop", main)
+                .setGlobalAction(new InventoryInterface() {
+                    @Override
+                    public void run(InventoryClickEvent e) {
+                        if(e.getCurrentItem() == null) return;
+                        if(canSell(e.getCurrentItem().getType()) &&
+                                ItemUtils.doItemStacksHaveTheSameName(e.getCurrentItem(), new ItemStack(e.getCurrentItem().getType()))){
+                            GlobalShopItem item = GlobalShop.getItem(e.getCurrentItem().getType());
+                            assert item != null;
+                            e.getWhoClicked().openInventory(item.getSpecificItemView(main));
+                        }
+                    }
+                })
                 .setClicksAllowed(false)
                 .setInventoryToShowOnClose(GlobalShop.getHomeGUI(main));
 
@@ -463,6 +443,18 @@ public class GlobalShop {
     public static Inventory getFoodShopGUI(Plugin main) {
         List<ItemStack> foods = new ArrayList<>();
         InventoryFactory factory = new InventoryFactory(6, "Food shop", main)
+                .setGlobalAction(new InventoryInterface() {
+                    @Override
+                    public void run(InventoryClickEvent e) {
+                        if(e.getCurrentItem() == null) return;
+                        if(canSell(e.getCurrentItem().getType()) &&
+                                ItemUtils.doItemStacksHaveTheSameName(e.getCurrentItem(), new ItemStack(e.getCurrentItem().getType()))){
+                            GlobalShopItem item = GlobalShop.getItem(e.getCurrentItem().getType());
+                            assert item != null;
+                            e.getWhoClicked().openInventory(item.getSpecificItemView(main));
+                        }
+                    }
+                })
                 .setClicksAllowed(false)
                 .setInventoryToShowOnClose(GlobalShop.getHomeGUI(main));
 
@@ -492,6 +484,18 @@ public class GlobalShop {
     public static Inventory getDecorationShopGUI(Plugin main) {
         List<ItemStack> foods = new ArrayList<>();
         InventoryFactory factory = new InventoryFactory(6, "Decoration shop", main)
+                .setGlobalAction(new InventoryInterface() {
+                    @Override
+                    public void run(InventoryClickEvent e) {
+                        if(e.getCurrentItem() == null) return;
+                        if(canSell(e.getCurrentItem().getType()) &&
+                                ItemUtils.doItemStacksHaveTheSameName(e.getCurrentItem(), new ItemStack(e.getCurrentItem().getType()))){
+                            GlobalShopItem item = GlobalShop.getItem(e.getCurrentItem().getType());
+                            assert item != null;
+                            e.getWhoClicked().openInventory(item.getSpecificItemView(main));
+                        }
+                    }
+                })
                 .setClicksAllowed(false)
                 .setInventoryToShowOnClose(GlobalShop.getHomeGUI(main));
 
@@ -526,11 +530,11 @@ public class GlobalShop {
                 .setItem(14, ShopItemType.FOOD.getIcon())
                 .setItem(15, ShopItemType.DECORATIVE.getIcon())
 
-                .setAction(11, e -> e.getWhoClicked().openInventory(getBlockShopGUI(plugin)))
-                .setAction(12, e -> e.getWhoClicked().openInventory(getOreShopGUI(plugin)))
-                .setAction(13, e -> e.getWhoClicked().openInventory(getItemShopGUI(plugin)))
-                .setAction(14, e -> e.getWhoClicked().openInventory(getFoodShopGUI(plugin)))
-                .setAction(15, e -> e.getWhoClicked().openInventory(getDecorationShopGUI(plugin)))
+                .setAction(11, e -> e.getWhoClicked().openInventory(getGUI(ShopItemType.BLOCK, plugin)))
+                .setAction(12, e -> e.getWhoClicked().openInventory(getGUI(ShopItemType.ORE, plugin)))
+                .setAction(13, e -> e.getWhoClicked().openInventory(getGUI(ShopItemType.ITEM, plugin)))
+                .setAction(14, e -> e.getWhoClicked().openInventory(getGUI(ShopItemType.FOOD, plugin)))
+                .setAction(15, e -> e.getWhoClicked().openInventory(getGUI(ShopItemType.DECORATIVE, plugin)))
 
                 .setClicksAllowed(false)
                 .fill(new ItemStackFactory(Material.BLACK_STAINED_GLASS_PANE)

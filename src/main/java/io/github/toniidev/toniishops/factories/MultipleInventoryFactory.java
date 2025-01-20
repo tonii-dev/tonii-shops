@@ -90,14 +90,14 @@ public class MultipleInventoryFactory {
                 .get());
 
         if (pageNumber > 0) {
-            template.setAction(27, e -> openPage(pageNumber - 1, template, e.getWhoClicked()));
+            template.setAction(27, e -> openPage(pageNumber - 1, e.getWhoClicked()));
             template.setItem(27, createNavigationItem(Material.ARROW,
                     StringUtils.formatColorCodes('&', "&cPrevious page"),
                     StringUtils.formatColorCodes('&', String.format("Navigate back to page &e%d", pageNumber))));
         }
 
         if (pageNumber < totalPages - 1) {
-            template.setAction(36, e -> openPage(pageNumber + 1, template, e.getWhoClicked()));
+            template.setAction(36, e -> openPage(pageNumber + 1, e.getWhoClicked()));
             template.setItem(36, createNavigationItem(Material.SPECTRAL_ARROW,
                     StringUtils.formatColorCodes('&', "&aNext page"),
                     StringUtils.formatColorCodes('&', String.format("Navigate to page &e%d", pageNumber + 2))));
@@ -111,11 +111,8 @@ public class MultipleInventoryFactory {
                 .get();
     }
 
-    private void openPage(int pageNumber, InventoryFactory template, HumanEntity player) {
-        Inventory prev = template.getInventoryToShowOnClose();
-        template.setInventoryToShowOnClose(null);
+    private void openPage(int pageNumber, HumanEntity player) {
         player.openInventory(pages.get(pageNumber));
-        template.setInventoryToShowOnClose(prev);
     }
 
     public Inventory get() {

@@ -13,10 +13,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Inventory factory. This class is going to be used to create any
@@ -39,7 +36,9 @@ public class InventoryFactory implements Listener {
 
     private String title = " ";
     private Map<Integer, Inventory> redirects = new HashMap<>();
+
     private Map<Integer, InventoryInterface> actions = new HashMap<>();
+    private InventoryInterface globalAction;
 
     private final List<Integer> slotsThatDoNotAcceptClicks = new ArrayList<>();
 
@@ -367,6 +366,23 @@ public class InventoryFactory implements Listener {
         return getFactory(inventory) != null;
     }
 
+    @Nullable
+    public InventoryInterface getAction(int slot) {
+        Map.Entry<Integer, InventoryInterface> entry = this.actions.entrySet().stream()
+                .filter(x -> x.getKey().equals(slot))
+                .findFirst().orElse(null);
+
+        if(entry == null) return null;
+        return entry.getValue();
+    }
+
+    public InventoryFactory setGlobalAction(InventoryInterface globalAction) {
+        for(int i = 0; i < this.inventory.getSize(); i++){
+            this.setAction(i, globalAction);
+        }
+        return this;
+    }
+
     /**
      * Handling InventoryClickEvent to disable clicks on the slots
      * on which clicks are disabled
@@ -417,7 +433,15 @@ public class InventoryFactory implements Listener {
         if (factory.getActions() == null) return;
         if (!factory.getActions().containsKey(e.getRawSlot())) return;
 
+        Inventory prev = factory.getInventoryToShowOnClose();
+        boolean closingAllowed = factory.isClosingAllowed;
+        if(!closingAllowed) factory.setClosingAllowed(true);
+
+        factory.setInventoryToShowOnClose(null);
         factory.getActions().get(e.getRawSlot()).run(e);
+
+        factory.setInventoryToShowOnClose(prev);
+        factory.setClosingAllowed(closingAllowed);
     }
 
     /**

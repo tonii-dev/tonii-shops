@@ -1,13 +1,18 @@
 package io.github.toniidev.toniishops.classes;
 
 import io.github.toniidev.toniishops.enums.ShopItemType;
+import io.github.toniidev.toniishops.factories.InventoryFactory;
+import io.github.toniidev.toniishops.factories.ItemStackFactory;
 import io.github.toniidev.toniishops.factories.StringFactory;
 import io.github.toniidev.toniishops.strings.GlobalShopSuccess;
 import io.github.toniidev.toniishops.utils.IntegerUtils;
-import io.github.toniidev.toniishops.utils.ItemUtils;
+import io.github.toniidev.toniishops.utils.StringUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
 
 import java.util.*;
 
@@ -18,8 +23,8 @@ public class GlobalShopItem {
     private final double basePrice;
     private final ShopItemType shopItemType;
 
-    public HashMap<Player, HashMap<Long, Double>> sells = new HashMap<>();
-    public HashMap<Player, Double> buys = new HashMap<>();
+    public HashMap<Player, Map.Entry<Long, Double>> sellHistory = new HashMap<>();
+    public HashMap<Player, Map.Entry<Long, Double>> buyHistory = new HashMap<>();
 
     /**
      * Creates a new GlobalShopItem instance
@@ -77,10 +82,7 @@ public class GlobalShopItem {
         // TODO: Make a method to ensure player gets the Item: if playerInventory is full, items will be sent to stashed, etc...
         player.getInventory().addItem(new ItemStack(this.material));
 
-        HashMap<Long, Double> key = new HashMap<>();
-        key.put(1, this.getBuyPrice());
-
-        buys.put(player, key);
+        buyHistory.put(player, new AbstractMap.SimpleEntry<>(1L, this.getBuyPrice()));
 
         this.amountOnTheMarket--;
     }
@@ -108,10 +110,7 @@ public class GlobalShopItem {
                 .append(this.getSellPrice() + "$").setColor('f')
                 .get());
 
-        HashMap<Long, Double> key = new HashMap<Long, Double>();
-        key.put(1, this.getSellPrice());
-
-        sells.put(player, key);
+        sellHistory.put(player, new AbstractMap.SimpleEntry<>(1L, this.getSellPrice()));
 
         this.increaseAmount();
     }
@@ -135,11 +134,7 @@ public class GlobalShopItem {
         }
 
         cumulativePrice = IntegerUtils.round(cumulativePrice, 2);
-
-        HashMap<Long, Double> key = new HashMap<>();
-        key.put(amount, cumulativePrice);
-
-        sells.put(player, key);
+        sellHistory.put(player, new AbstractMap.SimpleEntry<>(1L, cumulativePrice));
 
         player.sendMessage(new StringFactory()
                 .append("[Server]").setColor('a')
@@ -178,5 +173,88 @@ public class GlobalShopItem {
      */
     public void addToTheMarket(long amount) {
         this.amountOnTheMarket += amount;
+    }
+
+    public HashMap<Player, Map.Entry<Long, Double>> getSellHistory() {
+        return sellHistory;
+    }
+
+    public HashMap<Player, Map.Entry<Long, Double>> getBuyHistory() {
+        return buyHistory;
+    }
+
+    public Inventory getSpecificItemView(Plugin plugin) {
+        ItemStackFactory buyFactory = new ItemStackFactory(Material.FILLED_MAP)
+                .setName(StringUtils.formatColorCodes('&', "&aBuy orders"));
+
+        ItemStackFactory sellFactory = new ItemStackFactory(Material.FILLED_MAP)
+                .setName(StringUtils.formatColorCodes('&', "&6Sell orders"));
+
+        // TODO: Fix that only 1 lore line is showing
+
+        List<Map.Entry<Player, Map.Entry<Long, Double>>> buyHistoryList = new ArrayList<>(this.getBuyHistory().entrySet());
+        if (!buyHistoryList.isEmpty()) {
+            for(int i = 1; i <= (Math.min(buyHistoryList.size(), 6)); i++){
+                Map.Entry<Player, Map.Entry<Long, Double>> current = buyHistoryList.get(buyHistoryList.size() - i);
+                System.out.println(current.getKey());
+                sellFactory.addLoreLine(StringUtils.formatColorCodes('&', "&f" + current.getKey().getDisplayName() +
+                        " &7sold &f" + current.getValue().getKey() + "x &7for &f" + current.getValue().getValue()));
+            }
+        } else buyFactory.addLoreLine(StringUtils.formatColorCodes('&', "&9No recent orders to show."));
+
+        List<Map.Entry<Player, Map.Entry<Long, Double>>> sellHistoryList = new ArrayList<>(this.getSellHistory().entrySet());
+        if (!sellHistoryList.isEmpty()) {
+            for(int i = 1; i <= (Math.min(sellHistoryList.size(), 6)); i++){
+                Map.Entry<Player, Map.Entry<Long, Double>> current = sellHistoryList.get(sellHistoryList.size() - i);
+                System.out.println(current.getKey());
+                sellFactory.addLoreLine(StringUtils.formatColorCodes('&', "&f" + current.getKey().getDisplayName() +
+                        " &7sold &f" + current.getValue().getKey() + "x &7for &f" + current.getValue().getValue()));
+            }
+        } else sellFactory.addLoreLine(StringUtils.formatColorCodes('&', "&9No recent orders to show."));
+
+        return new InventoryFactory(3, "Details", plugin)
+                .setItem(10, new ItemStackFactory(Material.GOLDEN_HORSE_ARMOR)
+                        .setName(StringUtils.formatColorCodes('&', "&aBuy instantly"))
+                        .addLoreLine("This item will be sent to your inventory")
+                        .addLoreLine("if you pay for it")
+                        .addBlankLoreLine()
+                        .addLoreLine(StringUtils.formatColorCodes('&', "Price per unit: &6" + this.getBuyPrice() + "$"))
+                        .addBlankLoreLine()
+                        .addLoreLine(StringUtils.formatColorCodes('&', "&eClick to buy!"))
+                        .get())
+                .setItem(11, new ItemStackFactory(Material.HOPPER)
+                        .setName(StringUtils.formatColorCodes('&', "&6Sell instantly"))
+                        .addLoreLine(StringUtils.formatColorCodes('&', "&8/sellone, /sellall"))
+                        .addBlankLoreLine()
+                        .addLoreLine(StringUtils.formatColorCodes('&', "Price per unit: &6" + this.getSellPrice() + "$"))
+                        .addBlankLoreLine()
+                        .addLoreLine(StringUtils.formatColorCodes('&', "&eClick to sell!"))
+                        .get())
+
+                .setItem(13, new ItemStackFactory(this.getMaterial())
+                        .addLoreLine(this.getSubtitle())
+                        .get())
+
+                .setItem(15, buyFactory.get())
+                .setItem(16, sellFactory.get())
+                .fill(new ItemStackFactory(Material.BLACK_STAINED_GLASS_PANE)
+                        .setName(" ").get())
+                .setInventoryToShowOnClose(GlobalShop.getGUI(this.getShopItemType(), plugin))
+                .get();
+    }
+
+    public String getSubtitle(){
+        String value;
+
+        switch (this.shopItemType){
+            case ITEM -> value = StringUtils.formatColorCodes('&', "&8Item");
+            case FOOD -> value = StringUtils.formatColorCodes('&', "&8Food");
+            case DECORATIVE -> value = StringUtils.formatColorCodes('&', "&8Decoration");
+            case BLOCK -> value = StringUtils.formatColorCodes('&', "&8Block");
+            case ORE -> value = StringUtils.formatColorCodes('&', "&8Ore");
+            case null, default -> value = StringUtils.formatColorCodes('&', "&8null");
+        }
+
+        return value;
     }
 }
