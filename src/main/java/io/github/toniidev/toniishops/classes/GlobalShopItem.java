@@ -18,7 +18,7 @@ public class GlobalShopItem {
     private final double basePrice;
     private final ShopItemType shopItemType;
 
-    public HashMap<Player, Double> sells = new HashMap<>();
+    public HashMap<Player, HashMap<Long, Double>> sells = new HashMap<>();
     public HashMap<Player, Double> buys = new HashMap<>();
 
     /**
@@ -77,6 +77,11 @@ public class GlobalShopItem {
         // TODO: Make a method to ensure player gets the Item: if playerInventory is full, items will be sent to stashed, etc...
         player.getInventory().addItem(new ItemStack(this.material));
 
+        HashMap<Long, Double> key = new HashMap<>();
+        key.put(1, this.getBuyPrice());
+
+        buys.put(player, key);
+
         this.amountOnTheMarket--;
     }
 
@@ -103,6 +108,11 @@ public class GlobalShopItem {
                 .append(this.getSellPrice() + "$").setColor('f')
                 .get());
 
+        HashMap<Long, Double> key = new HashMap<Long, Double>();
+        key.put(1, this.getSellPrice());
+
+        sells.put(player, key);
+
         this.increaseAmount();
     }
 
@@ -125,6 +135,11 @@ public class GlobalShopItem {
         }
 
         cumulativePrice = IntegerUtils.round(cumulativePrice, 2);
+
+        HashMap<Long, Double> key = new HashMap<>();
+        key.put(amount, cumulativePrice);
+
+        sells.put(player, key);
 
         player.sendMessage(new StringFactory()
                 .append("[Server]").setColor('a')

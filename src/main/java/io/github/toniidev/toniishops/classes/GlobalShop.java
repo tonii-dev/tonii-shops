@@ -323,9 +323,18 @@ public class GlobalShop {
                         .addLoreLine(getSubtitle(item.getShopItemType()))
                         .get())
 
-                .setItem(15, new ItemStackFactory(Material.FILLED_MAP)
-                        .setName(StringUtils.formatColorCodes('&', "&aBuy orders"))
-                        .get())
+                // TODO: Put this on top of everything & do the same with sell
+                ItemStackFactory buyFactory = new ItemStackFactory(Material.FILLED_MAP)
+                        .setName(StringUtils.formatColorCodes('&', "&aBuy orders"));
+
+                Map<Player, HashMap<Long, Double>> history = GlobalShopItem.getBuyHistory();
+                if(!history.isEmpty()){
+                        for(int i = history.length - 1; i < history.length - 6; i++){
+                                buyFactory.addLoreLine(StringUtils.formatColorCodes('&', "&f" + player.getDisplayName() + 
+                                " &7bought &f" history.get(i).getKey().getKey() + "x &7for &f" + history.get(i).getKey().getKey()));
+                        }
+                }
+                else buyFactory.addLoreLine(StringUtils.formatColorCodes('&', "&9No recent orders to show."))
 
                 .get();
 
