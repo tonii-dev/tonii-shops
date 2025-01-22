@@ -51,4 +51,8 @@ commands:
   open-purse:
     aliases: [purse, view-purse, openpurse, viewpurse, purse]
     usage: /<command>
-    descriptions: Shows the player a GUI containing all his money
+    description: Shows the player a GUI containing all his money
+  sell-custom-amount:
+    aliases: [sellc, sellamount, sellspecifiedamount, sellcustomamount, sell-specified-amount, sellcustom, sell-custom, sell-c]
+    usage: /<command> <amount>
+    description: Sells the specified amount of the items that are of the same type of the one that the player is holding in main hand

@@ -19,7 +19,7 @@ import org.bukkit.permissions.Permission;
 public class SellAll implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
-        if (!(commandSender instanceof Player player)) {
+        /*if (!(commandSender instanceof Player player)) {
             commandSender.sendMessage(ConsoleString.COMMAND_NOT_EXECUTABLE_FROM_CONSOLE.getMessage());
             return true;
         }
@@ -34,17 +34,38 @@ public class SellAll implements CommandExecutor {
 
         if(CommandUtils.checkBaseArgs(strings, player, command)) return true;
 
-        if (player.getInventory().getItemInMainHand().getType().equals(Material.AIR)) {
-            player.sendMessage(GlobalShopError.INVALID_ITEM.getMessage());
+        if(strings.length == 0){
+            if (player.getInventory().getItemInMainHand().getType().equals(Material.AIR)) {
+                player.sendMessage(GlobalShopError.INVALID_ITEM.getMessage());
+                return true;
+            }
+
+            if(!GlobalShop.canSell(player.getInventory().getItemInMainHand().getType())){
+                player.sendMessage(GlobalShopError.ITEM_CANNOT_BE_SOLD.getMessage());
+                return true;
+            }
+
+            GlobalShopItem item = GlobalShop.getItem(player.getInventory().getItemInMainHand().getType());
+            assert item != null;
+
+            item.sellCustomAmount(player, player.getInventory().getItemInMainHand().getAmount());
+            player.getInventory().setItemInMainHand(new ItemStack(Material.AIR));
+
             return true;
         }
+        else{
+            Material materialToSell = Material.getMaterial(strings[0]);
+            if(materialToSell == null) {
 
-        GlobalShopItem item = GlobalShop.getItem(player.getInventory().getItemInMainHand().getType());
-        assert item != null;
+                return true;
+            }
 
-        item.sellCustomAmount(player, player.getInventory().getItemInMainHand().getAmount());
-        player.getInventory().setItemInMainHand(new ItemStack(Material.AIR));
+            if(player.getInventory().contains(Material.getMaterial(strings[0])))
+        }
 
-        return true;
+        return true;*/
+
+        /// Chill out, just use SellCustomAmount with Stack size!!
+        return new SellCustomAmount().callAsAPlayer(commandSender, ((Player) commandSender).getInventory().getItemInMainHand());
     }
 }

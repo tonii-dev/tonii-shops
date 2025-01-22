@@ -6,12 +6,10 @@ import io.github.toniidev.toniishops.factories.ItemStackFactory;
 import io.github.toniidev.toniishops.factories.MultipleInventoryFactory;
 import io.github.toniidev.toniishops.factories.StringFactory;
 import io.github.toniidev.toniishops.interfaces.InventoryInterface;
-import io.github.toniidev.toniishops.utils.IntegerUtils;
 import io.github.toniidev.toniishops.utils.ItemUtils;
 import io.github.toniidev.toniishops.utils.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -326,7 +324,7 @@ public class GlobalShop {
                                 ItemUtils.doItemStacksHaveTheSameName(e.getCurrentItem(), new ItemStack(e.getCurrentItem().getType()))){
                             GlobalShopItem item = GlobalShop.getItem(e.getCurrentItem().getType());
                             assert item != null;
-                            e.getWhoClicked().openInventory(item.getSpecificItemView(main));
+                            e.getWhoClicked().openInventory(item.getSpecificItemView(main, e.getWhoClicked()));
                         }
                     }
                 })
@@ -367,7 +365,7 @@ public class GlobalShop {
                                 ItemUtils.doItemStacksHaveTheSameName(e.getCurrentItem(), new ItemStack(e.getCurrentItem().getType()))){
                             GlobalShopItem item = GlobalShop.getItem(e.getCurrentItem().getType());
                             assert item != null;
-                            e.getWhoClicked().openInventory(item.getSpecificItemView(main));
+                            e.getWhoClicked().openInventory(item.getSpecificItemView(main, e.getWhoClicked()));
                         }
                     }
                 })
@@ -408,7 +406,7 @@ public class GlobalShop {
                                 ItemUtils.doItemStacksHaveTheSameName(e.getCurrentItem(), new ItemStack(e.getCurrentItem().getType()))){
                             GlobalShopItem item = GlobalShop.getItem(e.getCurrentItem().getType());
                             assert item != null;
-                            e.getWhoClicked().openInventory(item.getSpecificItemView(main));
+                            e.getWhoClicked().openInventory(item.getSpecificItemView(main, e.getWhoClicked()));
                         }
                     }
                 })
@@ -451,7 +449,7 @@ public class GlobalShop {
                                 ItemUtils.doItemStacksHaveTheSameName(e.getCurrentItem(), new ItemStack(e.getCurrentItem().getType()))){
                             GlobalShopItem item = GlobalShop.getItem(e.getCurrentItem().getType());
                             assert item != null;
-                            e.getWhoClicked().openInventory(item.getSpecificItemView(main));
+                            e.getWhoClicked().openInventory(item.getSpecificItemView(main, e.getWhoClicked()));
                         }
                     }
                 })
@@ -492,7 +490,7 @@ public class GlobalShop {
                                 ItemUtils.doItemStacksHaveTheSameName(e.getCurrentItem(), new ItemStack(e.getCurrentItem().getType()))){
                             GlobalShopItem item = GlobalShop.getItem(e.getCurrentItem().getType());
                             assert item != null;
-                            e.getWhoClicked().openInventory(item.getSpecificItemView(main));
+                            e.getWhoClicked().openInventory(item.getSpecificItemView(main, e.getWhoClicked()));
                         }
                     }
                 })
@@ -540,35 +538,5 @@ public class GlobalShop {
                 .fill(new ItemStackFactory(Material.BLACK_STAINED_GLASS_PANE)
                         .setName(" ").get())
                 .get();
-    }
-
-    private static long getAmountOfItems() {
-        long value = 0;
-
-        for (GlobalShopItem item : GlobalShop.shop) {
-            value += item.getAmountOnTheMarket();
-        }
-
-        return value;
-    }
-
-    private static double getMediumBuyPrice() {
-        double value = 0;
-
-        for (GlobalShopItem item : GlobalShop.shop) {
-            value += item.getBuyPrice();
-        }
-
-        return IntegerUtils.round((value / getAmountOfItems()), 2);
-    }
-
-    private static double getMediumSellPrice() {
-        double value = 0;
-
-        for (GlobalShopItem item : GlobalShop.shop) {
-            value += item.getSellPrice();
-        }
-
-        return IntegerUtils.round((value / getAmountOfItems()), 2);
     }
 }

@@ -16,7 +16,7 @@ public enum ShopError {
     NOT_ENOUGH_MONEY(new StringFactory()
             .append("[World]").setColor('a')
             .append("Shop:").setColor('e')
-            .append("You don't have enough money to buy from this shop!").setColor('7')
+            .append("You don't have enough money to buy this item!").setColor('7')
             .get()),
     NO_OWNER(new StringFactory()
             .append("[World]").setColor('a')

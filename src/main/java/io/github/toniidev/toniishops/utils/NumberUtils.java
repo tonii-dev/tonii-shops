@@ -3,7 +3,7 @@ package io.github.toniidev.toniishops.utils;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-public class IntegerUtils {
+public class NumberUtils {
     /**
      * Find the minimum amount of rows an Inventory has to be done of based on how many ItemStacks
      * have to be in that Inventory.
@@ -33,5 +33,25 @@ public class IntegerUtils {
         BigDecimal bd = new BigDecimal(number);
         bd = bd.setScale(decimalPlaces, RoundingMode.HALF_UP);  // Round to the specified number of decimals
         return bd.doubleValue();
+    }
+
+    public static boolean isInteger(String string) {
+        if (string == null || string.isEmpty()) return false; // Null or empty check
+        try {
+            Integer.parseInt(string);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    public static boolean isDouble(String string) {
+        if (string == null || string.isEmpty()) return false; // Null or empty check
+        try {
+            Double.parseDouble(string);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
 }

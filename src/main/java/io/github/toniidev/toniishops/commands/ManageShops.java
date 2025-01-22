@@ -7,7 +7,7 @@ import io.github.toniidev.toniishops.strings.ConsoleString;
 import io.github.toniidev.toniishops.strings.CommandError;
 import io.github.toniidev.toniishops.strings.ShopError;
 import io.github.toniidev.toniishops.utils.CommandUtils;
-import io.github.toniidev.toniishops.utils.IntegerUtils;
+import io.github.toniidev.toniishops.utils.NumberUtils;
 import io.github.toniidev.toniishops.utils.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -64,7 +64,7 @@ public class ManageShops implements CommandExecutor {
                 .addBlankLoreLine()
                 .get();
 
-        InventoryFactory shopManagementFactory = new InventoryFactory(IntegerUtils.findInventoryRowsToCreate(playerShops.size()), "Shop management", main);
+        InventoryFactory shopManagementFactory = new InventoryFactory(NumberUtils.findInventoryRowsToCreate(playerShops.size()), "Shop management", main);
         for (int i = 0; i < playerShops.size(); i++) {
             shopManagementFactory.setItem(i, new ItemStackFactory(baseItem.clone())
                     .addLoreLine(StringUtils.formatColorCodes('&', "Location: &f") + StringUtils.convertLocation(playerShops.get(i).getLocation(), ',', '7'))

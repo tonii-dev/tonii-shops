@@ -27,7 +27,7 @@ public class InputFactory implements Listener {
     private final static Set<InputFactory> factories = new HashSet<>();
 
     /// It cannot be final since the blank constructor does not set this
-    private Plugin main;
+    private final Plugin main;
 
     /// It cannot be final since the blank constructor does not set this
     private Player watching;
@@ -50,8 +50,8 @@ public class InputFactory implements Listener {
     /**
      * Initialize a reference to this. It is only used to register Listener
      */
-    public InputFactory() {
-
+    public InputFactory(Plugin plugin) {
+        this.main = plugin;
     }
 
     /**
@@ -147,6 +147,7 @@ public class InputFactory implements Listener {
         assert factory != null;
 
         if (factory.getAction() == null) return;
+        e.setCancelled(true);
         /// We must use a BukkitRunnable because the AsyncPlayerChatEvent is async
         new BukkitRunnable() {
             @Override

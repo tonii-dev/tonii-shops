@@ -19,7 +19,7 @@ public class SellItem implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
-        if (!(commandSender instanceof Player player)) {
+        /*if (!(commandSender instanceof Player player)) {
             commandSender.sendMessage(ConsoleString.COMMAND_NOT_EXECUTABLE_FROM_CONSOLE.getMessage());
             return true;
         }
@@ -50,6 +50,8 @@ public class SellItem implements CommandExecutor {
         item.sellOne(player);
         player.getInventory().getItemInMainHand().setAmount(player.getInventory().getItemInMainHand().getAmount() - 1);
 
-        return true;
+        return true;*/
+        /// Chill out, just use SellCustomAmount with 1 as amount!!
+        return new SellCustomAmount().callAsAPlayer(commandSender, 1);
     }
 }

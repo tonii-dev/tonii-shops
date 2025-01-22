@@ -2,7 +2,7 @@ package io.github.toniidev.toniishops.classes;
 
 import io.github.toniidev.toniishops.factories.ScoreboardFactory;
 import io.github.toniidev.toniishops.strings.ShopError;
-import io.github.toniidev.toniishops.utils.IntegerUtils;
+import io.github.toniidev.toniishops.utils.NumberUtils;
 import io.github.toniidev.toniishops.utils.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -136,7 +136,7 @@ public class ServerPlayer {
 
         return new ScoreboardFactory(this.getPlayer(), StringUtils.formatColorCodes('&', "&b&lWorld&f&lWide"))
                 .addLine("　")
-                .addLine(StringUtils.formatColorCodes('&', "&fMoney: &a" + IntegerUtils.round(this.money, 2) + "$"))
+                .addLine(StringUtils.formatColorCodes('&', "&fMoney: &a" + NumberUtils.round(this.money, 2) + "$"))
                 .addLine(shopLine)
                 .addBlankLine()
                 .addLine(StringUtils.formatColorCodes('&', "&fLocation: &r" + StringUtils.convertLocation(this.getPlayer().getLocation(), ',', '7', 'e')));

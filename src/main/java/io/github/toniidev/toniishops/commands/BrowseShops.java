@@ -3,13 +3,11 @@ package io.github.toniidev.toniishops.commands;
 import io.github.toniidev.toniishops.classes.Shop;
 import io.github.toniidev.toniishops.factories.InventoryFactory;
 import io.github.toniidev.toniishops.factories.ItemStackFactory;
-import io.github.toniidev.toniishops.factories.StringFactory;
 import io.github.toniidev.toniishops.strings.CommandError;
-import io.github.toniidev.toniishops.strings.CommandString;
 import io.github.toniidev.toniishops.strings.ConsoleString;
 import io.github.toniidev.toniishops.strings.ShopError;
 import io.github.toniidev.toniishops.utils.CommandUtils;
-import io.github.toniidev.toniishops.utils.IntegerUtils;
+import io.github.toniidev.toniishops.utils.NumberUtils;
 import io.github.toniidev.toniishops.utils.ItemUtils;
 import io.github.toniidev.toniishops.utils.StringUtils;
 import org.bukkit.Bukkit;
@@ -73,7 +71,7 @@ public class BrowseShops implements CommandExecutor {
                 .addBlankLoreLine()
                 .get();
 
-        InventoryFactory shopManagementFactory = new InventoryFactory(IntegerUtils.findInventoryRowsToCreate(shopsToConsider.size()), "Browse shops", main)
+        InventoryFactory shopManagementFactory = new InventoryFactory(NumberUtils.findInventoryRowsToCreate(shopsToConsider.size()), "Browse shops", main)
                 .fill(new ItemStackFactory(Material.BLACK_STAINED_GLASS_PANE)
                         .setName(" ")
                         .get())

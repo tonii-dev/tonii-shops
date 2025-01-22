@@ -31,4 +31,14 @@ public class GlobalShopAction {
     public double getPrice() {
         return price;
     }
+
+    public GlobalShopAction setAmount(long amount) {
+        this.amount = amount;
+        return this;
+    }
+
+    public GlobalShopAction setPrice(double price) {
+        this.price = price;
+        return this;
+    }
 }

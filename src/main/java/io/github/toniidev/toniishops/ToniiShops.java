@@ -2,6 +2,7 @@ package io.github.toniidev.toniishops;
 
 import io.github.toniidev.toniishops.classes.GlobalShop;
 import io.github.toniidev.toniishops.commands.*;
+import io.github.toniidev.toniishops.factories.InputFactory;
 import io.github.toniidev.toniishops.factories.InventoryFactory;
 import io.github.toniidev.toniishops.listeners.BlockListener;
 import io.github.toniidev.toniishops.listeners.PlayerListener;
@@ -26,12 +27,14 @@ public final class ToniiShops extends JavaPlugin {
         new InitializeUtils(new SellAll(), "sell-all").initialize();
         new InitializeUtils(new Shop(this), "open-shop").initialize();
         new InitializeUtils(new Purse(this), "open-purse").initialize();
+        new InitializeUtils(new SellCustomAmount(), "sell-custom-amount").initialize();
 
         Bukkit.getPluginManager().registerEvents(new BlockListener(this), this);
         Bukkit.getPluginManager().registerEvents(new InventoryFactory(), this);
         Bukkit.getPluginManager().registerEvents(new PlayerListener(), this);
+        Bukkit.getPluginManager().registerEvents(new InputFactory(this), this);
 
-        GlobalShop.initializeShop(1);
+        GlobalShop.initializeShop(200);
     }
 
     @Override
