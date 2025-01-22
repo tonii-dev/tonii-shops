@@ -1,11 +1,14 @@
 package io.github.toniidev.toniishops.classes;
 
 import io.github.toniidev.toniishops.factories.ScoreboardFactory;
+import io.github.toniidev.toniishops.strings.GeneralMessage;
 import io.github.toniidev.toniishops.strings.ShopError;
 import io.github.toniidev.toniishops.utils.NumberUtils;
 import io.github.toniidev.toniishops.utils.StringUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -14,12 +17,13 @@ import java.util.UUID;
 
 public class ServerPlayer {
     /**
-     * Items of this list are loaded onEnable and
+     * Items of this lists are loaded onEnable and
      * are saved onDisable
-     * TODO: Save and load this list's items
+     * TODO: Save and load this lists' items
      */
     public static List<ServerPlayer> serverPlayers = new ArrayList<>();
 
+    private final List<ItemStack> stashed = new ArrayList<>();
     private final UUID playerUniqueID;
     private double money = 40000;
 
@@ -31,6 +35,49 @@ public class ServerPlayer {
     public ServerPlayer(Player player) {
         this.playerUniqueID = player.getUniqueId();
         this.refreshScoreboard();
+    }
+
+    /**
+     * Default getter for this class
+     * @return A List of ItemStacks containing all the ItemStacks that could not be assigned to the player
+     * because his Inventory was full
+     */
+    public List<ItemStack> getStashed() {
+        return stashed;
+    }
+
+    /**
+     * Adds an ItemStack to the Stashed ItemStacks list
+     * @param itemStack The ItemStack to add to the list
+     */
+    public void addItemStackToStashed(ItemStack itemStack){
+        stashed.add(itemStack);
+    }
+
+    /**
+     * Removes one Item from an ItemStack of the specified material from the Stashed ItemStacks list
+     * @param material The Material of the Item to remove from the ItemStack present in the list
+     */
+    public void removeItemStackFromStashed(Material material){
+        ItemStack itemStack = stashed.stream()
+                .filter(x -> x.getType().equals(material))
+                .findFirst().orElse(null);
+        if(itemStack == null) return;
+        if(itemStack.getAmount() > 1) itemStack.setAmount(itemStack.getAmount() - 1);
+        else stashed.remove(itemStack);
+    }
+
+    /**
+     * Adds the specified ItemStack to the Player linked to this ServerPlayer instance. If the player does not have enough inventory
+     * space, it will be sent to /stashed inventory
+     * @param itemStack The ItemStack that has to be added to the player Inventory
+     */
+    public void addItemToInventory(ItemStack itemStack){
+        if(this.getPlayer().getInventory().firstEmpty() == -1){
+            this.addItemStackToStashed(itemStack);
+            this.getPlayer().sendMessage(GeneralMessage.NOT_ENOUGH_INVENTORY_SPACE.getMessage());
+        }
+        else this.getPlayer().getInventory().addItem(itemStack);
     }
 
     /**

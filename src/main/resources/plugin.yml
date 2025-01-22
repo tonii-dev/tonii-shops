@@ -11,6 +11,8 @@ permissions:
     description: Allows the player to browse other players' shops
   item-selling:
     description: Allows the player to sell his items to the Global Server Shop
+  item-buying:
+    description: Allows the player to buy items from the Global Server Shop
   global-shop-access:
     description: Allows the player to buy and sell items from the Global Server Shop
   purse-management:
@@ -56,3 +58,7 @@ commands:
     aliases: [sellc, sellamount, sellspecifiedamount, sellcustomamount, sell-specified-amount, sellcustom, sell-custom, sell-c]
     usage: /<command> <amount>
     description: Sells the specified amount of the items that are of the same type of the one that the player is holding in main hand
+  buy:
+    aliases: [buy-item, buyitem]
+    usage: /<command> <materialname> <amount>
+    description: Buy the specified amount of items of the specified name

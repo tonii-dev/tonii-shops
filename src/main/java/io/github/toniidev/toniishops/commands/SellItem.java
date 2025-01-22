@@ -14,44 +14,18 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
+import org.bukkit.plugin.Plugin;
 
 public class SellItem implements CommandExecutor {
+    private final Plugin main;
+
+    public SellItem(Plugin plugin){
+        this.main = plugin;
+    }
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
-        /*if (!(commandSender instanceof Player player)) {
-            commandSender.sendMessage(ConsoleString.COMMAND_NOT_EXECUTABLE_FROM_CONSOLE.getMessage());
-            return true;
-        }
-
-        Permission permission = Bukkit.getPluginManager().getPermission("item-selling");
-        assert permission != null;
-        if (!commandSender.hasPermission(permission)) {
-            commandSender.sendMessage(CommandError.MISSING_PERMISSIONS.getMessage() +
-                    StringUtils.formatColorCodes('&', "&r&f" + permission.getName()));
-            return true;
-        }
-
-        if(CommandUtils.checkBaseArgs(strings, player, command)) return true;
-
-        if (player.getInventory().getItemInMainHand().getType().equals(Material.AIR)) {
-            player.sendMessage(GlobalShopError.INVALID_ITEM.getMessage());
-            return true;
-        }
-
-        if(!GlobalShop.canSell(player.getInventory().getItemInMainHand().getType())){
-            player.sendMessage(GlobalShopError.ITEM_CANNOT_BE_SOLD.getMessage());
-            return true;
-        }
-
-        GlobalShopItem item = GlobalShop.getItem(player.getInventory().getItemInMainHand().getType());
-        assert item != null;
-
-        item.sellOne(player);
-        player.getInventory().getItemInMainHand().setAmount(player.getInventory().getItemInMainHand().getAmount() - 1);
-
-        return true;*/
         /// Chill out, just use SellCustomAmount with 1 as amount!!
-        return new SellCustomAmount().callAsAPlayer(commandSender, 1);
+        return new SellCustomAmount(main).callAsAPlayer(commandSender, 1);
     }
 }

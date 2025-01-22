@@ -23,11 +23,12 @@ public final class ToniiShops extends JavaPlugin {
         new InitializeUtils(new ManageShops(this), "manage-shops").initialize();
         new InitializeUtils(new BrowseShops(this), "browse-shops").initialize();
         new InitializeUtils(new CreateShop(), "create-shop").initialize();
-        new InitializeUtils(new SellItem(), "sell-item").initialize();
-        new InitializeUtils(new SellAll(), "sell-all").initialize();
+        new InitializeUtils(new SellItem(this), "sell-item").initialize();
+        new InitializeUtils(new SellAll(this), "sell-all").initialize();
         new InitializeUtils(new Shop(this), "open-shop").initialize();
         new InitializeUtils(new Purse(this), "open-purse").initialize();
-        new InitializeUtils(new SellCustomAmount(), "sell-custom-amount").initialize();
+        new InitializeUtils(new SellCustomAmount(this), "sell-custom-amount").initialize();
+        new InitializeUtils(new Buy(this), "buy").initialize();
 
         Bukkit.getPluginManager().registerEvents(new BlockListener(this), this);
         Bukkit.getPluginManager().registerEvents(new InventoryFactory(), this);

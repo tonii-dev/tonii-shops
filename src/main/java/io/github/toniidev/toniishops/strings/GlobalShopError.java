@@ -13,10 +13,20 @@ public enum GlobalShopError {
             .append("Global shop:").setColor('e')
             .append("The amount you specified is invalid.").setColor('7')
             .get()),
+    NOT_ENOUGH_ITEMS_SELLING(new StringFactory()
+            .append("[Server]").setColor('a')
+            .append("Global shop:").setColor('e')
+            .append("The global shop does not sell that much items of this type.").setColor('7')
+            .get()),
     ITEM_CANNOT_BE_SOLD(new StringFactory()
             .append("[Server]").setColor('a')
             .append("Global shop:").setColor('e')
             .append("This item cannot be sold.").setColor('7')
+            .get()),
+    ITEM_NOT_EXISTING(new StringFactory()
+            .append("[Server]").setColor('a')
+            .append("Global shop:").setColor('e')
+            .append("The item you specified does not exist. Did you mean").setColor('7')
             .get()),
     ITEM_NOT_OWNED(new StringFactory()
             .append("[Server]").setColor('a')

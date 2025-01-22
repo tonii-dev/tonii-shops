@@ -1,15 +1,12 @@
 package io.github.toniidev.toniishops.classes;
 
+import io.github.toniidev.toniishops.commands.Buy;
 import io.github.toniidev.toniishops.commands.SellCustomAmount;
 import io.github.toniidev.toniishops.enums.GlobalShopActionType;
 import io.github.toniidev.toniishops.enums.ShopItemType;
 import io.github.toniidev.toniishops.extendable.GlobalShopAction;
-import io.github.toniidev.toniishops.factories.InputFactory;
-import io.github.toniidev.toniishops.factories.InventoryFactory;
-import io.github.toniidev.toniishops.factories.ItemStackFactory;
-import io.github.toniidev.toniishops.factories.StringFactory;
+import io.github.toniidev.toniishops.factories.*;
 import io.github.toniidev.toniishops.strings.GlobalShopError;
-import io.github.toniidev.toniishops.strings.GlobalShopSuccess;
 import io.github.toniidev.toniishops.utils.NumberUtils;
 import io.github.toniidev.toniishops.utils.StringUtils;
 import org.bukkit.Material;
@@ -45,6 +42,38 @@ public class GlobalShopItem {
         this.shopItemType = type;
     }
 
+    public List<ItemStack> getBuyHistory() {
+        List<ItemStack> value = new ArrayList<>();
+        for (GlobalShopBuy buy : buyHistory) {
+            value.add(new ItemStackFactory(new ItemStack(this.getMaterial(), Math.min(64, (int) buy.getAmount())))
+                    .setName(StringUtils.formatColorCodes('&', "&aItem buy"))
+                    .addLoreLine("Informations about this action")
+                    .addBlankLoreLine()
+                    .addLoreLine(StringUtils.formatColorCodes('&', "Player: &f" + buy.getPlayer().getDisplayName()))
+                    .addLoreLine(StringUtils.formatColorCodes('&', "Price: &f" + buy.getPrice() + "$"))
+                    .addLoreLine(StringUtils.formatColorCodes('&', "Amount: &f" + buy.getAmount() + "x"))
+                    .get());
+        }
+
+        return value;
+    }
+
+    public List<ItemStack> getSellHistory() {
+        List<ItemStack> value = new ArrayList<>();
+        for (GlobalShopSell sell : sellHistory) {
+            value.add(new ItemStackFactory(new ItemStack(this.getMaterial(), Math.min(64, (int) sell.getAmount())))
+                    .setName(StringUtils.formatColorCodes('&', "&6Item sell"))
+                    .addLoreLine("Informations about this action")
+                    .addBlankLoreLine()
+                    .addLoreLine(StringUtils.formatColorCodes('&', "Player: &f" + sell.getPlayer().getDisplayName()))
+                    .addLoreLine(StringUtils.formatColorCodes('&', "Price: &f" + sell.getPrice() + "$"))
+                    .addLoreLine(StringUtils.formatColorCodes('&', "Amount: &f" + sell.getAmount() + "x"))
+                    .get());
+        }
+
+        return value;
+    }
+
     /**
      * Default getter for this class
      *
@@ -74,50 +103,19 @@ public class GlobalShopItem {
     }
 
     /**
-     * Buys one of the available items linked to this GlobalShopItem instance
-     *
-     * @param player The player that buys the items
-     */
-    public void buyOne(Player player) {
-        ServerPlayer serverPlayer = ServerPlayer.getPlayer(player);
-        assert serverPlayer != null;
-
-        if (!serverPlayer.secureRemoveMoney(this.getBuyPrice())) return;
-
-        // TODO: Make a method to ensure player gets the Item: if playerInventory is full, items will be sent to stashed, etc...
-        player.getInventory().addItem(new ItemStack(this.material));
-
-        buyHistory.add(new GlobalShopBuy(false, 1, player, this.getBuyPrice()));
-
-        this.amountOnTheMarket--;
-    }
-
-    /**
      * Increases the amount of Items of the Material linked to this GlobalShopItem instance
      * that are currently being sold on the market
      */
-    private void increaseAmount() {
+    public void increaseAmount() {
         this.amountOnTheMarket++;
     }
 
     /**
-     * Sells one Item from the ItemStack that the specified player has in main hand
-     *
-     * @param player The player that is selling the items
+     * Decreases the amount of Items of the Material linked to this GlobalShopItem instance
+     * that are currently being sold on the market
      */
-    public void sellOne(Player player) {
-        ServerPlayer serverPlayer = ServerPlayer.getPlayer(player);
-        assert serverPlayer != null;
-
-        serverPlayer.addMoney(this.getSellPrice());
-
-        player.sendMessage(new StringFactory(GlobalShopSuccess.ITEM_SOLD_SUCCESSFULLY.getMessage())
-                .append(this.getSellPrice() + "$").setColor('f')
-                .get());
-
-        sellHistory.add(new GlobalShopSell(false, 1, player, this.getSellPrice()));
-
-        this.increaseAmount();
+    public void decreaseAmount() {
+        this.amountOnTheMarket--;
     }
 
     /**
@@ -153,6 +151,38 @@ public class GlobalShopItem {
     }
 
     /**
+     * Removes the specified number of Items from the Global Server market
+     *
+     * @param player The player that bought these items
+     * @param amount The amount of Items to buy from the shop
+     */
+    public void buyCustomAmount(Player player, long amount) {
+        ServerPlayer serverPlayer = ServerPlayer.getPlayer(player);
+        assert serverPlayer != null;
+
+        double cumulativePrice = 0.0;
+
+        for (long i = 0; i < amount; i++) {
+            cumulativePrice += this.getBuyPrice();
+            serverPlayer.removeMoney(this.getBuyPrice());
+            this.decreaseAmount();
+        }
+
+        cumulativePrice = NumberUtils.round(cumulativePrice, 2);
+        buyHistory.add(new GlobalShopBuy(true, amount, player, cumulativePrice));
+
+        player.sendMessage(new StringFactory()
+                .append("[Server]").setColor('a')
+                .append("Global shop:").setColor('e')
+                .append("Bought").setColor('7')
+                .append(String.valueOf(amount)).setColor('f')
+                .append(material.name().toLowerCase(Locale.ROOT).replace("_", " "))
+                .append("for").setColor('7')
+                .append(cumulativePrice + "$").setColor('f')
+                .get());
+    }
+
+    /**
      * Default getter for this class
      *
      * @return The material linked to this GlobalShopItem instance
@@ -175,14 +205,6 @@ public class GlobalShopItem {
         this.amountOnTheMarket = amount;
     }
 
-    public List<GlobalShopSell> getSellHistory() {
-        return sellHistory;
-    }
-
-    public List<GlobalShopBuy> getBuyHistory() {
-        return buyHistory;
-    }
-
     public int getPresenceInPlayerInventory(HumanEntity player) {
         int value = 0;
 
@@ -196,31 +218,9 @@ public class GlobalShopItem {
     }
 
     public Inventory getSpecificItemView(Plugin plugin, HumanEntity player) {
-        ItemStackFactory buyHistoryFactory = new ItemStackFactory(Material.FILLED_MAP)
-                .setName(StringUtils.formatColorCodes('&', "&aBuy history"));
-
-        ItemStackFactory sellHistoryFactory = new ItemStackFactory(Material.FILLED_MAP)
-                .setName(StringUtils.formatColorCodes('&', "&6Sell history"));
-
-        if (!buyHistory.isEmpty()) {
-            for (int i = 1; i <= (Math.min(buyHistory.size(), 21)); i++) {
-                GlobalShopBuy current = buyHistory.get(buyHistory.size() - i);
-                buyHistoryFactory.addLoreLine(StringUtils.formatColorCodes('&', "&9[" + (buyHistory.size() - i) + "] " + "&f" + current.getPlayer().getDisplayName() +
-                        " &7sold &f" + current.getAmount() + "x &7for &f" + current.getPrice() + "$"));
-            }
-        } else buyHistoryFactory.addLoreLine(StringUtils.formatColorCodes('&', "&9No recent orders to show."));
-
-        if (!sellHistory.isEmpty()) {
-            for (int i = 1; i <= (Math.min(sellHistory.size(), 21)); i++) {
-                GlobalShopSell current = sellHistory.get(sellHistory.size() - i);
-                sellHistoryFactory.addLoreLine(StringUtils.formatColorCodes('&', "&9[" + (sellHistory.size() - i) + "] " + "&f" + current.getPlayer().getDisplayName() +
-                        " &7sold &f" + current.getAmount() + "x &7for &f" + current.getPrice() + "$"));
-            }
-        } else sellHistoryFactory.addLoreLine(StringUtils.formatColorCodes('&', "&9No recent orders to show."));
-
         ItemStackFactory sellFactory = new ItemStackFactory(Material.HOPPER)
                 .setName(StringUtils.formatColorCodes('&', "&6Sell instantly"))
-                .addLoreLine(StringUtils.formatColorCodes('&', "&8/sellone, /sellall"))
+                .addLoreLine(StringUtils.formatColorCodes('&', "&8/sellone, /sellall, /sellc <amount>"))
                 .addBlankLoreLine()
                 .addLoreLine(StringUtils.formatColorCodes('&', "Price per unit: &6" + this.getSellPrice() + "$"))
                 .addLoreLine(StringUtils.formatColorCodes('&', "Inventory: " + (getPresenceInPlayerInventory(player) == 0 ? "&cNone" : "&6" + getPresenceInPlayerInventory(player) + "&7x")));
@@ -246,8 +246,14 @@ public class GlobalShopItem {
                         .addLoreLine(this.getSubtitle())
                         .get())
 
-                .setItem(15, buyHistoryFactory.get())
-                .setItem(16, sellHistoryFactory.get())
+                .setItem(15, new ItemStackFactory(Material.FILLED_MAP)
+                        .setName(StringUtils.formatColorCodes('&', "&aBuy history"))
+                        .addLoreLine(StringUtils.formatColorCodes('&', (buyHistory.isEmpty() ? "&9No recent orders to show." : "&9Click to browse!")))
+                        .get())
+                .setItem(16, new ItemStackFactory(Material.FILLED_MAP)
+                        .setName(StringUtils.formatColorCodes('&', "&6Sell history"))
+                        .addLoreLine(StringUtils.formatColorCodes('&', (buyHistory.isEmpty() ? "&9No recent orders to show." : "&9Click to browse!")))
+                        .get())
                 .fill(new ItemStackFactory(Material.BLACK_STAINED_GLASS_PANE)
                         .setName(" ").get())
                 .setInventoryToShowOnClose(GlobalShop.getGUI(this.getShopItemType(), plugin))
@@ -261,19 +267,31 @@ public class GlobalShopItem {
                                 getFinalPrice(GlobalShopActionType.SELL_ONE, 1)), plugin, e.getWhoClicked()));
                     }
                 })
+                .setAction(15, e -> {
+                    InventoryFactory historyFactory = new InventoryFactory(6, "History", plugin)
+                            .setClicksAllowed(false)
+                            .setInventoryToShowOnClose(getSpecificItemView(plugin, player));
 
-                /// Ok, now we know how to execute commands without the player actually executes them. Perfect.
-                /// Must make the SellAll and the SellItem command independent of the Item that the player is holding
-                /// in main hand and specify the Item that has to be sold. We should also create a new command, /sell-custom-amount
-                /// or something like this. All good.
-                /*.setAction(11, e -> {
-                    new SellAll().onCommand((CommandSender) e.getWhoClicked(), Bukkit.getPluginCommand("sell-all"), null, args);
-                })*/
+                    if (!this.getBuyHistory().isEmpty()) {
+                        e.getWhoClicked().openInventory(new MultipleInventoryFactory(this.getBuyHistory(), plugin, historyFactory)
+                                .get());
+                    }
+                })
+                .setAction(16, e -> {
+                    InventoryFactory historyFactory = new InventoryFactory(6, "History", plugin)
+                            .setClicksAllowed(false)
+                            .setInventoryToShowOnClose(getSpecificItemView(plugin, player));
+
+                    if (!this.getSellHistory().isEmpty()) {
+                        e.getWhoClicked().openInventory(new MultipleInventoryFactory(this.getSellHistory(), plugin, historyFactory)
+                                .get());
+                    }
+                })
 
                 .get();
     }
 
-    private Double getCumulativeSellPrice(long amount) {
+    public Double getCumulativeSellPrice(long amount) {
         double value = 0;
         long prevAmountOnTheMarket = this.getAmountOnTheMarket();
 
@@ -286,7 +304,7 @@ public class GlobalShopItem {
         return NumberUtils.round(value, 2);
     }
 
-    private Double getCumulativeBuyPrice(long amount) {
+    public Double getCumulativeBuyPrice(long amount) {
         double value = 0;
         long prevAmountOnTheMarket = this.getAmountOnTheMarket();
 
@@ -318,8 +336,8 @@ public class GlobalShopItem {
             return getSelectAmountGUI(action.setAmount(getAmountOnTheMarket())
                     .setPrice(getFinalPrice(action, getAmountOnTheMarket())), plugin, player);
         if (action.getType().equals(GlobalShopActionType.SELL_MULTIPLE) && action.getAmount() > getPresenceInPlayerInventory(player))
-            return getSelectAmountGUI(action.setAmount(getAmountOnTheMarket())
-                    .setPrice(getFinalPrice(action, getAmountOnTheMarket())), plugin, player);
+            return getSelectAmountGUI(action.setAmount(getPresenceInPlayerInventory(player))
+                    .setPrice(getFinalPrice(action, getPresenceInPlayerInventory(player))), plugin, player);
 
         ItemStack buy = new ItemStackFactory(Material.LIME_STAINED_GLASS_PANE)
                 .setName(StringUtils.formatColorCodes('&', "&aBuy"))
@@ -344,6 +362,11 @@ public class GlobalShopItem {
                             .setAction(e1 -> {
                                 if (!NumberUtils.isInteger(e1.getMessage())) {
                                     e1.getPlayer().sendMessage(GlobalShopError.INVALID_AMOUNT.getMessage());
+                                    e1.getPlayer().openInventory(getSelectAmountGUI(action, plugin, player));
+                                    return;
+                                }
+                                if (Integer.parseInt(e1.getMessage()) > getAmountOnTheMarket()) {
+                                    e1.getPlayer().sendMessage(GlobalShopError.NOT_ENOUGH_ITEMS_SELLING.getMessage());
                                     e1.getPlayer().openInventory(getSelectAmountGUI(action, plugin, player));
                                     return;
                                 }
@@ -389,7 +412,8 @@ public class GlobalShopItem {
                                     .setPrice(getFinalPrice(action, 64)), plugin, player)));
 
             if (getAmountOnTheMarket() > 0) {
-                factory.setAction(16, e -> e.getWhoClicked().openInventory(getConfirmGUI(action, plugin)));
+                factory.setAction(16, e -> e.getWhoClicked().openInventory(getConfirmGUI(action
+                        .setPrice(getFinalPrice(action, action.getAmount())), plugin)));
             }
         }
         if (action instanceof GlobalShopSell) {
@@ -439,7 +463,8 @@ public class GlobalShopItem {
                     .setAction(12, e -> e.getWhoClicked().openInventory(this.getSelectAmountGUI
                             (action.setAmount(getPresenceInPlayerInventory(player))
                                     .setPrice(getFinalPrice(action, getPresenceInPlayerInventory(player))), plugin, player)))
-                    .setAction(16, e -> e.getWhoClicked().openInventory(getConfirmGUI(action, plugin)));
+                    .setAction(16, e -> e.getWhoClicked().openInventory(getConfirmGUI(action
+                            .setPrice(getFinalPrice(action, action.getAmount())), plugin)));
         }
 
         return factory.fill(new ItemStackFactory(Material.BLACK_STAINED_GLASS_PANE)
@@ -467,17 +492,44 @@ public class GlobalShopItem {
                         .get())
                 .setAction(13, e -> {
                     switch (action.getType()) {
-                        case SELL_ONE, SELL_MULTIPLE -> new SellCustomAmount().callAsAPlayer(e.getWhoClicked(), action.getAmount());
-                        case BUY_ONE, BUY_MULTIPLE -> {
-                            ServerPlayer player = ServerPlayer.getPlayer((Player) e.getWhoClicked());
-                            assert player != null;
+                        case SELL_ONE, SELL_MULTIPLE -> {
+                            new SellCustomAmount(plugin).call(e.getWhoClicked(), getMaterial(), action.getAmount());
+                            this.sellCustomAmount(action.getPlayer(), action.getAmount());
 
-                            if (!player.secureRemoveMoney(action.getPrice())) return;
+                            /// Remove sold items
+                            /// We must remove from the player Inventory <amount> of Items that have the type <material>
+                            int remainingToRemove = (int) action.getAmount();
 
-                            for (int i = 0; i < action.getAmount(); i++) {
-                                this.amountOnTheMarket--;
-                                e.getWhoClicked().getInventory().addItem(new ItemStack(this.getMaterial()));
+                            for (ItemStack itemStack : action.getPlayer().getInventory().getContents()) {
+                                if (itemStack == null || !itemStack.getType().equals(material)) continue;
+
+                                int stackAmount = itemStack.getAmount();
+
+                                if (stackAmount > remainingToRemove) {
+                                    /// Reduce the stack size and finish removal
+                                    itemStack.setAmount(stackAmount - remainingToRemove);
+                                    break;
+                                } else {
+                                    /// Remove the entire stack and continue
+                                    remainingToRemove -= stackAmount;
+                                    action.getPlayer().getInventory().removeItem(itemStack);
+                                }
+
+                                if (remainingToRemove <= 0) break;
                             }
+                        }
+                        case BUY_ONE, BUY_MULTIPLE -> {
+                            new Buy(plugin).callAsAPlayer(action.getPlayer(), getMaterial().name(), action.getAmount());
+                            this.buyCustomAmount(action.getPlayer(), action.getAmount());
+
+                            /// Securely add the bought items to the player's inventory
+                            ServerPlayer player = ServerPlayer.getPlayer(action.getPlayer());
+                            assert player != null;
+                            for (int i = 0; i < action.getAmount(); i++) {
+                                player.addItemToInventory(new ItemStack(this.getMaterial()));
+                            }
+
+                            action.getPlayer().closeInventory();
                         }
                     }
 
@@ -486,7 +538,7 @@ public class GlobalShopItem {
                 .fill(new ItemStackFactory(Material.BLACK_STAINED_GLASS_PANE)
                         .setName(" ")
                         .get())
-                .setInventoryToShowOnClose(getSelectAmountGUI(action, plugin, action.getPlayer()))
+                .setInventoryToShowOnClose(getSelectAmountGUI(action.setPrice(getFinalPrice(action, action.getAmount())), plugin, action.getPlayer()))
                 .get();
     }
 

@@ -123,4 +123,81 @@ public class StringUtils {
     public static String convertLocation(Location location, char split, char splitsColor, char coordinatesColor) {
         return StringUtils.formatColorCodes('&', "&" + coordinatesColor + Math.round(location.getX()) + "&" + splitsColor + split + " &" + coordinatesColor + Math.round(location.getY()) + "&" + splitsColor + split + " &" + coordinatesColor + Math.round(location.getZ()));
     }
+
+
+    /**
+     * Computes the affinity between two strings based on their Levenshtein distance.
+     * A smaller distance indicates a higher affinity.
+     *
+     * @param string1 the first string
+     * @param string2 the second string
+     * @return the Levenshtein distance between the two strings;
+     *         returns -1 if either string is null
+     */
+    public static int getAffinity(String string1, String string2) {
+        if (string1 == null || string2 == null) {
+            return -1; // Handle null inputs
+        }
+
+        int len1 = string1.length();
+        int len2 = string2.length();
+
+        // Initialize a matrix to store distances
+        int[][] dp = new int[len1 + 1][len2 + 1];
+
+        // Fill the base cases
+        for (int i = 0; i <= len1; i++) {
+            dp[i][0] = i; // Cost of deleting characters from string1
+        }
+        for (int j = 0; j <= len2; j++) {
+            dp[0][j] = j; // Cost of inserting characters into string1
+        }
+
+        // Fill the DP table
+        for (int i = 1; i <= len1; i++) {
+            for (int j = 1; j <= len2; j++) {
+                if (string1.charAt(i - 1) == string2.charAt(j - 1)) {
+                    dp[i][j] = dp[i - 1][j - 1]; // No cost if characters match
+                } else {
+                    dp[i][j] = 1 + Math.min(
+                            dp[i - 1][j - 1], // Substitution
+                            Math.min(
+                                    dp[i - 1][j],   // Deletion
+                                    dp[i][j - 1]    // Insertion
+                            )
+                    );
+                }
+            }
+        }
+
+        return dp[len1][len2]; // The bottom-right corner contains the result
+    }
+
+    /**
+     * Finds the string in a list that has the highest affinity (lowest Levenshtein distance)
+     * with the given string.
+     *
+     * @param target the string to compare against
+     * @param candidates the list of strings to search
+     * @return the string from the list that has the highest affinity with the target;
+     *         returns null if the list is empty or null
+     */
+    public static String findMostAffineString(String target, List<String> candidates) {
+        if (target == null || candidates == null || candidates.isEmpty()) {
+            return null; // Handle null or empty inputs
+        }
+
+        String mostAffine = null;
+        int minDistance = Integer.MAX_VALUE;
+
+        for (String candidate : candidates) {
+            int distance = getAffinity(target, candidate);
+            if (distance < minDistance) {
+                minDistance = distance;
+                mostAffine = candidate;
+            }
+        }
+
+        return mostAffine;
+    }
 }
