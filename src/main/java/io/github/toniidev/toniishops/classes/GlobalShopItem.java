@@ -252,7 +252,7 @@ public class GlobalShopItem {
                         .get())
                 .setItem(16, new ItemStackFactory(Material.FILLED_MAP)
                         .setName(StringUtils.formatColorCodes('&', "&6Sell history"))
-                        .addLoreLine(StringUtils.formatColorCodes('&', (buyHistory.isEmpty() ? "&9No recent orders to show." : "&9Click to browse!")))
+                        .addLoreLine(StringUtils.formatColorCodes('&', (sellHistory.isEmpty() ? "&9No recent orders to show." : "&9Click to browse!")))
                         .get())
                 .fill(new ItemStackFactory(Material.BLACK_STAINED_GLASS_PANE)
                         .setName(" ").get())
