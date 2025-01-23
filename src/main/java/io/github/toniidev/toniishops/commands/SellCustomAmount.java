@@ -1,7 +1,6 @@
 package io.github.toniidev.toniishops.commands;
 
 import io.github.toniidev.toniishops.classes.GlobalShop;
-import io.github.toniidev.toniishops.classes.GlobalShopBuy;
 import io.github.toniidev.toniishops.classes.GlobalShopItem;
 import io.github.toniidev.toniishops.classes.GlobalShopSell;
 import io.github.toniidev.toniishops.secret.Secret;

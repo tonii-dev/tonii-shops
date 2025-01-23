@@ -1,9 +1,7 @@
 package io.github.toniidev.toniishops.utils;
 
-import io.github.toniidev.toniishops.enums.ShopItemType;
 import io.github.toniidev.toniishops.strings.ConsoleString;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 

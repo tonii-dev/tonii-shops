@@ -4,9 +4,9 @@ import io.github.toniidev.toniishops.enums.GlobalShopActionType;
 import org.bukkit.entity.Player;
 
 public class GlobalShopAction {
-    private GlobalShopActionType type;
+    private final GlobalShopActionType type;
     private long amount;
-    private Player player;
+    private final Player player;
     private double price;
 
     public GlobalShopAction(GlobalShopActionType type, long amount, Player player, double price) {

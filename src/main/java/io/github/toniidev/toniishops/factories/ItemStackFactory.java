@@ -3,7 +3,6 @@ package io.github.toniidev.toniishops.factories;
 import io.github.toniidev.toniishops.strings.ConsoleString;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 

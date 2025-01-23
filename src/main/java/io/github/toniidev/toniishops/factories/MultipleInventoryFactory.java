@@ -1,11 +1,9 @@
 package io.github.toniidev.toniishops.factories;
 
-import io.github.toniidev.toniishops.classes.GlobalShop;
 import io.github.toniidev.toniishops.interfaces.InventoryInterface;
 import io.github.toniidev.toniishops.utils.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
@@ -13,14 +11,12 @@ import org.bukkit.plugin.Plugin;
 import java.util.*;
 
 public class MultipleInventoryFactory {
-    private final Plugin main;
     private final List<Inventory> pages;
 
     private final int[] airSlots = {2, 3, 4, 5, 6, 7, 11, 12, 13, 14, 15, 16, 20, 21, 22, 23, 24, 25, 29,
             30, 31, 32, 33, 34, 38, 39, 40, 41, 42, 43, 47, 48, 49, 50, 51, 52};
 
     public MultipleInventoryFactory(List<ItemStack> items, Plugin plugin, InventoryFactory startFactory) {
-        this.main = plugin;
         this.pages = new ArrayList<>();
 
         int totalPages = (int) Math.ceil((double) items.size() / airSlots.length);
@@ -116,6 +112,6 @@ public class MultipleInventoryFactory {
     }
 
     public Inventory get() {
-        return pages.isEmpty() ? null : pages.get(0);
+        return pages.isEmpty() ? null : pages.getFirst();
     }
 }

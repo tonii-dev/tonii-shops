@@ -32,8 +32,6 @@ public class InputFactory implements Listener {
     /// It cannot be final since the blank constructor does not set this
     private Player watching;
     private ChatInterface action;
-    private String title;
-    private String subtitle;
 
     /**
      * Creates an InputFactory instance
@@ -73,7 +71,6 @@ public class InputFactory implements Listener {
      * @return This InputFactory instance
      */
     public InputFactory setTitle(String value) {
-        this.title = value;
         return this;
     }
 
@@ -84,7 +81,6 @@ public class InputFactory implements Listener {
      * @return This InputFactory instance
      */
     public InputFactory setSubtitle(String value) {
-        this.subtitle = value;
         return this;
     }
 

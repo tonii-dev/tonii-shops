@@ -2,7 +2,6 @@ package io.github.toniidev.toniishops.strings;
 
 import io.github.toniidev.toniishops.factories.StringFactory;
 import org.bukkit.command.PluginCommand;
-import org.bukkit.plugin.Plugin;
 
 public enum CommandString {
     COMMAND_USAGE(new StringFactory()

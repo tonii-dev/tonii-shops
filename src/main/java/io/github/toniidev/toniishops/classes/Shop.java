@@ -2,7 +2,6 @@ package io.github.toniidev.toniishops.classes;
 
 import io.github.toniidev.toniishops.factories.InventoryFactory;
 import io.github.toniidev.toniishops.factories.ItemStackFactory;
-import io.github.toniidev.toniishops.strings.ShopError;
 import io.github.toniidev.toniishops.utils.ItemUtils;
 import io.github.toniidev.toniishops.utils.StringUtils;
 import org.bukkit.Bukkit;

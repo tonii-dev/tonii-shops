@@ -27,7 +27,7 @@ public enum ShopItemType {
             .addLoreLine("Main decorational blocks")
             .get());
 
-    private ItemStack icon;
+    private final ItemStack icon;
 
     ShopItemType(ItemStack stack){
         this.icon = stack;

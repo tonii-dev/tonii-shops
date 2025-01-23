@@ -4,8 +4,6 @@ import io.github.toniidev.toniishops.classes.GlobalShop;
 import io.github.toniidev.toniishops.classes.GlobalShopBuy;
 import io.github.toniidev.toniishops.classes.GlobalShopItem;
 import io.github.toniidev.toniishops.classes.ServerPlayer;
-import io.github.toniidev.toniishops.extendable.GlobalShopAction;
-import io.github.toniidev.toniishops.factories.ItemStackFactory;
 import io.github.toniidev.toniishops.factories.StringFactory;
 import io.github.toniidev.toniishops.secret.Secret;
 import io.github.toniidev.toniishops.strings.CommandError;
@@ -20,7 +18,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.Plugin;
 
