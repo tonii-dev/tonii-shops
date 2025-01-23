@@ -42,6 +42,12 @@ public class GlobalShopItem {
         this.shopItemType = type;
     }
 
+    /**
+     * Converts all the GlobalShopBuy items contained in this.buyHistory into a List of ItemStacks
+     *
+     * @return A List of ItemStacks, each of which is linked to a GlobalShopBuy. Every ItemStack
+     * has this.material as Material and other info in its lore
+     */
     public List<ItemStack> getBuyHistory() {
         List<ItemStack> value = new ArrayList<>();
         for (GlobalShopBuy buy : buyHistory) {
@@ -58,6 +64,12 @@ public class GlobalShopItem {
         return value;
     }
 
+    /**
+     * Converts all the GlobalShopSell items contained in this.sellHistory into a List of ItemStacks
+     *
+     * @return A List of ItemStacks, each of which is linked to a GlobalShopSell. Every ItemStack
+     * has this.material as Material and other info in its lore
+     */
     public List<ItemStack> getSellHistory() {
         List<ItemStack> value = new ArrayList<>();
         for (GlobalShopSell sell : sellHistory) {
@@ -201,10 +213,19 @@ public class GlobalShopItem {
         return this.amountOnTheMarket;
     }
 
+    /**
+     * Default setter for this class
+     * @param amount The amount to set the amount of items of this GlobalShopItem to
+     */
     public void setAmountOnTheMarket(long amount) {
         this.amountOnTheMarket = amount;
     }
 
+    /**
+     * Searches the specified player's inventory to get how many items of this type are contained into his Inventory
+     * @param player The player to search the Inventory of
+     * @return The exact amount of items of this type that are contained into the specified player's inventory
+     */
     public int getPresenceInPlayerInventory(HumanEntity player) {
         int value = 0;
 
@@ -217,6 +238,13 @@ public class GlobalShopItem {
         return value;
     }
 
+    /**
+     * Gets the view where the specified player can interact with the Item.
+     * He can see the buy and sell history of the item and can choose to open buy and sell Inventories
+     * @param plugin The main plugin instance
+     * @param player The player that should see this Inventory
+     * @return The Inventory linked to a SpecifiedItem, in which the player can interact with the Item
+     */
     public Inventory getSpecificItemView(Plugin plugin, HumanEntity player) {
         ItemStackFactory sellFactory = new ItemStackFactory(Material.HOPPER)
                 .setName(StringUtils.formatColorCodes('&', "&6Sell instantly"))
@@ -291,6 +319,11 @@ public class GlobalShopItem {
                 .get();
     }
 
+    /**
+     * Gets the price that someone receives if he tries to sell the specified amount of items
+     * @param amount The amount based on which the price should be calculated
+     * @return The price that someone would receive if he tried to sell the specified amount of items of this GlobalShopItem
+     */
     public Double getCumulativeSellPrice(long amount) {
         double value = 0;
         long prevAmountOnTheMarket = this.getAmountOnTheMarket();
@@ -304,6 +337,11 @@ public class GlobalShopItem {
         return NumberUtils.round(value, 2);
     }
 
+    /**
+     * Gets the price that should be paid if someone tries to buy the specified amount of items
+     * @param amount The amount based on which the price should be calculated
+     * @return The price that should be paid if someone should buy the specified amount of items of this GlobalShopItem
+     */
     public Double getCumulativeBuyPrice(long amount) {
         double value = 0;
         long prevAmountOnTheMarket = this.getAmountOnTheMarket();
@@ -317,6 +355,12 @@ public class GlobalShopItem {
         return NumberUtils.round(value, 2);
     }
 
+    /**
+     * Calculates the money that the specified action should give/take
+     * @param action The action type of which we want to calculate the price
+     * @param customAmount The amount of items that the action involves
+     * @return The final price of the action
+     */
     private Double getFinalPrice(GlobalShopActionType action, long customAmount) {
         double value = 0;
         switch (action) {
@@ -326,10 +370,25 @@ public class GlobalShopItem {
         return value;
     }
 
+    /**
+     * Calculates the money that the specified action should give/take
+     * @param action The action of which we want to calculate the price
+     * @param customAmount The amount of items that the action involves
+     * @return The final price of the action
+     */
     private Double getFinalPrice(GlobalShopAction action, long customAmount) {
         return getFinalPrice(action.getType(), customAmount);
     }
 
+    /**
+     * Gets the Inventory where players can decide how many items buy or sell
+     * @param action The GlobalShopAction to handle. If it's a buy action the Inventory
+     *               will have certain aspects, if it's a sell action the Inventory will have
+     *               other aspects
+     * @param plugin The main plugin instance
+     * @param player The Player that has to choose the amount of items that he wants to work with
+     * @return The Inventory in which the specified player can choose the amount of items to interact with
+     */
     public Inventory getSelectAmountGUI(GlobalShopAction action, Plugin plugin, HumanEntity player) {
         if ((action.getType().equals(GlobalShopActionType.BUY_ONE) || action.getType().equals(GlobalShopActionType.BUY_MULTIPLE)) &&
                 action.getAmount() > this.getAmountOnTheMarket())
@@ -475,6 +534,12 @@ public class GlobalShopItem {
                 .get();
     }
 
+    /**
+     * Gets the GUI where a certain action is confirmed
+     * @param action The action that has to be confirmed
+     * @param plugin The main plugin instance
+     * @return An Inventory where a certain player can confirm the specified action
+     */
     public Inventory getConfirmGUI(GlobalShopAction action, Plugin plugin) {
         String word = (action.getType().equals(GlobalShopActionType.BUY_ONE) || action.getType().equals(GlobalShopActionType.BUY_MULTIPLE)) ?
                 "buy" : "sell";
@@ -542,6 +607,10 @@ public class GlobalShopItem {
                 .get();
     }
 
+    /**
+     * Gets a string, that contains this GlobalShopItem type, that can be displayed under the object as a lore line
+     * @return The subtitle to show under the ItemStack of this GlobalShopItem type
+     */
     public String getSubtitle() {
         String value;
 
