@@ -298,10 +298,19 @@ public class GlobalShop {
         return null;
     }
 
-    public static Inventory getGUI(ShopItemType type, Plugin plugin){
+    /**
+     * Gets the Inventory to show based on which type of ShopIcon the player has clicked
+     * on. This is used on the HomeGUI to display each category inventory and to get the
+     * Inventory to show on close when a GlobalShopItem specific inventory gets closed
+     *
+     * @param type   The ShopItemType to get the general Inventory of
+     * @param plugin The main plugin instance
+     * @return The Inventory that contains all the Items of the specified type
+     */
+    public static Inventory getGUI(ShopItemType type, Plugin plugin) {
         Inventory value;
 
-        switch (type){
+        switch (type) {
             case ITEM -> value = getItemShopGUI(plugin);
             case FOOD -> value = getFoodShopGUI(plugin);
             case DECORATIVE -> value = getDecorationShopGUI(plugin);
@@ -313,24 +322,39 @@ public class GlobalShop {
         return value;
     }
 
-    public static Inventory getBlockShopGUI(Plugin main) {
+    /**
+     * Gets the Inventory containing all the blocks that the GlobalShop sells
+     *
+     * @param main The main plugin instance
+     * @return The Inventory containing all the blocks that the GlobalShop sells
+     */
+    private static Inventory getBlockShopGUI(Plugin main) {
+        /// This procedure is used to get all the category shops!
+        /// Create a list in which there are going to be all the items of the specific category type that the Shop sells
+        /// In this case we are talking about blocks
         List<ItemStack> blocks = new ArrayList<>();
+
+        /// Create the factory the MultipleInventory will be based on
         InventoryFactory factory = new InventoryFactory(6, "Block shop", main)
-                .setGlobalAction(new InventoryInterface() {
-                    @Override
-                    public void run(InventoryClickEvent e) {
-                        if(e.getCurrentItem() == null) return;
-                        if(canSell(e.getCurrentItem().getType()) &&
-                                ItemUtils.doItemStacksHaveTheSameName(e.getCurrentItem(), new ItemStack(e.getCurrentItem().getType()))){
-                            GlobalShopItem item = GlobalShop.getItem(e.getCurrentItem().getType());
-                            assert item != null;
-                            e.getWhoClicked().openInventory(item.getSpecificItemView(main, e.getWhoClicked()));
-                        }
+                /// Sets the action to execute on any item of the Inventory (in this case we are talking about MultipleInventory)
+                .setGlobalAction(e -> {
+                    if (e.getCurrentItem() == null) return;
+                    /// Check if the ItemStack can be sold. If an ItemStack has the same name as a new ItemStack that is created
+                    /// at the moment with the same material, it means it's not a Custom Item Stack so it can be sold.
+                    if (canSell(e.getCurrentItem().getType()) &&
+                            ItemUtils.doItemStacksHaveTheSameName(e.getCurrentItem(), new ItemStack(e.getCurrentItem().getType()))) {
+
+                        GlobalShopItem item = GlobalShop.getItem(e.getCurrentItem().getType());
+                        assert item != null;
+                        /// Display the SpecificItemView on that item
+                        e.getWhoClicked().openInventory(item.getSpecificItemView(main, e.getWhoClicked()));
                     }
                 })
                 .setClicksAllowed(false)
                 .setInventoryToShowOnClose(GlobalShop.getHomeGUI(main));
 
+        /// Get all ShopItems, then filter them and only get the items of the category this function is linked to,
+        /// then just add each of these to the list we created before
         for (GlobalShopItem item : GlobalShop.shop) {
             if (item.getShopItemType().equals(ShopItemType.BLOCK)) {
                 blocks.add(new ItemStackFactory(item.getMaterial())
@@ -354,19 +378,22 @@ public class GlobalShop {
                 .get();
     }
 
+    /**
+     * Gets the Inventory containing all the blocks that the GlobalShop sells
+     *
+     * @param main The main plugin instance
+     * @return The Inventory containing all the blocks that the GlobalShop sells
+     */
     public static Inventory getOreShopGUI(Plugin main) {
         List<ItemStack> ores = new ArrayList<>();
         InventoryFactory factory = new InventoryFactory(6, "Ore shop", main)
-                .setGlobalAction(new InventoryInterface() {
-                    @Override
-                    public void run(InventoryClickEvent e) {
-                        if(e.getCurrentItem() == null) return;
-                        if(canSell(e.getCurrentItem().getType()) &&
-                                ItemUtils.doItemStacksHaveTheSameName(e.getCurrentItem(), new ItemStack(e.getCurrentItem().getType()))){
-                            GlobalShopItem item = GlobalShop.getItem(e.getCurrentItem().getType());
-                            assert item != null;
-                            e.getWhoClicked().openInventory(item.getSpecificItemView(main, e.getWhoClicked()));
-                        }
+                .setGlobalAction(e -> {
+                    if (e.getCurrentItem() == null) return;
+                    if (canSell(e.getCurrentItem().getType()) &&
+                            ItemUtils.doItemStacksHaveTheSameName(e.getCurrentItem(), new ItemStack(e.getCurrentItem().getType()))) {
+                        GlobalShopItem item = GlobalShop.getItem(e.getCurrentItem().getType());
+                        assert item != null;
+                        e.getWhoClicked().openInventory(item.getSpecificItemView(main, e.getWhoClicked()));
                     }
                 })
                 .setClicksAllowed(false)
@@ -395,19 +422,23 @@ public class GlobalShop {
                 .get();
     }
 
+    /**
+     * Gets the Inventory containing all the items that the GlobalShop sells. Further
+     * comments about the code are contained in GlobalShop.getBlockShopGUI()
+     *
+     * @param main The main plugin instance
+     * @return The Inventory containing all the items that the GlobalShop sells
+     */
     public static Inventory getItemShopGUI(Plugin main) {
         List<ItemStack> ores = new ArrayList<>();
         InventoryFactory factory = new InventoryFactory(6, "Item shop", main)
-                .setGlobalAction(new InventoryInterface() {
-                    @Override
-                    public void run(InventoryClickEvent e) {
-                        if(e.getCurrentItem() == null) return;
-                        if(canSell(e.getCurrentItem().getType()) &&
-                                ItemUtils.doItemStacksHaveTheSameName(e.getCurrentItem(), new ItemStack(e.getCurrentItem().getType()))){
-                            GlobalShopItem item = GlobalShop.getItem(e.getCurrentItem().getType());
-                            assert item != null;
-                            e.getWhoClicked().openInventory(item.getSpecificItemView(main, e.getWhoClicked()));
-                        }
+                .setGlobalAction(e -> {
+                    if (e.getCurrentItem() == null) return;
+                    if (canSell(e.getCurrentItem().getType()) &&
+                            ItemUtils.doItemStacksHaveTheSameName(e.getCurrentItem(), new ItemStack(e.getCurrentItem().getType()))) {
+                        GlobalShopItem item = GlobalShop.getItem(e.getCurrentItem().getType());
+                        assert item != null;
+                        e.getWhoClicked().openInventory(item.getSpecificItemView(main, e.getWhoClicked()));
                     }
                 })
                 .setClicksAllowed(false)
@@ -438,19 +469,23 @@ public class GlobalShop {
                 .get();
     }
 
+    /**
+     * Gets the Inventory containing all the foods that the GlobalShop sells. Further
+     * comments about the code are contained in GlobalShop.getBlockShopGUI()
+     *
+     * @param main The main plugin instance
+     * @return The Inventory containing all the foods that the GlobalShop sells
+     */
     public static Inventory getFoodShopGUI(Plugin main) {
         List<ItemStack> foods = new ArrayList<>();
         InventoryFactory factory = new InventoryFactory(6, "Food shop", main)
-                .setGlobalAction(new InventoryInterface() {
-                    @Override
-                    public void run(InventoryClickEvent e) {
-                        if(e.getCurrentItem() == null) return;
-                        if(canSell(e.getCurrentItem().getType()) &&
-                                ItemUtils.doItemStacksHaveTheSameName(e.getCurrentItem(), new ItemStack(e.getCurrentItem().getType()))){
-                            GlobalShopItem item = GlobalShop.getItem(e.getCurrentItem().getType());
-                            assert item != null;
-                            e.getWhoClicked().openInventory(item.getSpecificItemView(main, e.getWhoClicked()));
-                        }
+                .setGlobalAction(e -> {
+                    if (e.getCurrentItem() == null) return;
+                    if (canSell(e.getCurrentItem().getType()) &&
+                            ItemUtils.doItemStacksHaveTheSameName(e.getCurrentItem(), new ItemStack(e.getCurrentItem().getType()))) {
+                        GlobalShopItem item = GlobalShop.getItem(e.getCurrentItem().getType());
+                        assert item != null;
+                        e.getWhoClicked().openInventory(item.getSpecificItemView(main, e.getWhoClicked()));
                     }
                 })
                 .setClicksAllowed(false)
@@ -479,19 +514,23 @@ public class GlobalShop {
                 .get();
     }
 
+    /**
+     * Gets the Inventory containing all the decorative blocks that the GlobalShop sells. Further
+     * comments about the code are contained in GlobalShop.getBlockShopGUI()
+     *
+     * @param main The main plugin instance
+     * @return The Inventory containing all the decorative blocks that the GlobalShop sells
+     */
     public static Inventory getDecorationShopGUI(Plugin main) {
         List<ItemStack> foods = new ArrayList<>();
         InventoryFactory factory = new InventoryFactory(6, "Decoration shop", main)
-                .setGlobalAction(new InventoryInterface() {
-                    @Override
-                    public void run(InventoryClickEvent e) {
-                        if(e.getCurrentItem() == null) return;
-                        if(canSell(e.getCurrentItem().getType()) &&
-                                ItemUtils.doItemStacksHaveTheSameName(e.getCurrentItem(), new ItemStack(e.getCurrentItem().getType()))){
-                            GlobalShopItem item = GlobalShop.getItem(e.getCurrentItem().getType());
-                            assert item != null;
-                            e.getWhoClicked().openInventory(item.getSpecificItemView(main, e.getWhoClicked()));
-                        }
+                .setGlobalAction(e -> {
+                    if (e.getCurrentItem() == null) return;
+                    if (canSell(e.getCurrentItem().getType()) &&
+                            ItemUtils.doItemStacksHaveTheSameName(e.getCurrentItem(), new ItemStack(e.getCurrentItem().getType()))) {
+                        GlobalShopItem item = GlobalShop.getItem(e.getCurrentItem().getType());
+                        assert item != null;
+                        e.getWhoClicked().openInventory(item.getSpecificItemView(main, e.getWhoClicked()));
                     }
                 })
                 .setClicksAllowed(false)
@@ -520,6 +559,12 @@ public class GlobalShop {
                 .get();
     }
 
+    /**
+     * Get the Inventory to display when a player opens the shop with the related command
+     *
+     * @param plugin The main Plugin instance
+     * @return The Shop Home Inventory
+     */
     public static Inventory getHomeGUI(Plugin plugin) {
         return new InventoryFactory(3, "Global shop", plugin)
                 .setItem(11, ShopItemType.BLOCK.getIcon())
